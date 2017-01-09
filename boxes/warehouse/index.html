@@ -1,0 +1,108 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="google-signin-client_id" content="219956410475-n3rfhtl3giomu4j10lg1g7o7u8sqb0c1.apps.googleusercontent.com">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2/datatables.min.css"/>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="container" id="loginContainer">		  
+		  <div class="panel panel-default">
+		    <div class="panel-heading">Store Tools - Boxes - Login</div>
+		    <div class="panel-body">
+			  <p class="center-block">Please use your store email address to login.</p>
+		 	  <div class="btn g-signin2 center-block" data-onsuccess="onSignIn"></div>
+		    </div>
+		  </div>
+		</div>
+        <div class="container" id="mainContainer" style="display:none;">
+        <nav class="navbar navbar-default">
+			<div class="container-fluid">
+			<a class="navbar-brand" href="#">Store Tools - Boxes </a>
+			<form class="navbar-form navbar-left" id="product-detail-upload">
+				<div class="form-group">
+				<input type="file" class="form-control">
+				</div>
+				<button type="submit" class="btn btn-default">Submit</button>
+			</form>
+			<ul class="nav navbar-nav navbar-right">
+			<li><p class="navbar-text" id="store-name"></p></li>
+			<li><a class="btn" href="#" onclick="signOut();">[ Sign out ]</a></li>
+			</ul>
+			</div>
+		</nav>
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation"><a href="#sentBoxes" aria-controls="profile" role="tab" data-toggle="tab">Sent Boxes</a></li>
+		</ul>
+			<div role="tabpanel" class="tab-pane fade in active" id="sentBoxes">
+				<table id="sent-boxes-table" class="table table-striped">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Location</th>
+							<th>Sent Date</th>
+							<th>Tracking Number</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+        </div>
+		<div class="sent-detail" style="display:none">
+		<table class="table table-condensed" >
+			<thead>
+				<tr>
+					<th></th>
+					<th colspan="2">Recycles.</th>
+					<th colspan="2">RMA.</th>
+					<th colspan="2">DOA.</th>
+					<th colspan="2">Damaged by Tech.</th>
+				</tr>
+				<tr>
+					<th>Screen.</th>
+					<th>Sent.</th>
+					<th>Received.</th>
+					<th>Sent.</th>
+					<th>Received.</th>
+					<th>Sent.</th>
+					<th>Received.</th>
+					<th>Sent.</th>
+					<th>Received.</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+		</div>
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+        <script src="js/plugins.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+		<script src="https://cdn.datatables.net/t/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2/datatables.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="js/admin.js"></script>
+    </body>
+</html>
