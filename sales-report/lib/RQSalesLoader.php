@@ -19,10 +19,13 @@ class RQSalesLoader{
     const COLHEAD_REGULARTIME   = "Total Clocked";    
     const COLHEAD_FIRSTNAME     = "First Name";    
     const COLHEAD_LASTNAME      = "Last Name"; 
-    const COLHEAD_MANAGER       = "Manager";  
-    const COLHEAD_HOURS         = "Hours";  
-    const COLHEAD_MGREMPHOURS   = 3;  
-    const ROWHEAD_INDEX         = 3;
+    const COLHEAD_MANAGER       = "Manager";   
+    const COLHEAD_SGHOURS       = "Hours";  
+    const COLHEAD_SGSALARY      = "Salary";  
+    const COLHEAD_SGMANAGER     = "Manager";  
+    const COLHEAD_SGMGRHOURS    = "Manager N";    
+    const COLHEAD_SGEMPHOURS    = "Employees";  
+    const ROWHEAD_INDEX         = 3;  
 
     var $arrSales = array();
     var $arrOvers = array(); 
@@ -42,8 +45,11 @@ class RQSalesLoader{
             self::COLHEAD_FIRSTNAME => 0,  
             self::COLHEAD_LASTNAME => 0,  
             self::COLHEAD_MANAGER => 1,  
-            self::COLHEAD_HOURS => 2,  
-            self::COLHEAD_MGREMPHOURS => 3,    
+            self::COLHEAD_SGHOURS => 3,  
+            self::COLHEAD_SGSALARY => 2,  
+            self::COLHEAD_SGMANAGER => 1,  
+            self::COLHEAD_SGMGRHOURS => 4,    
+            self::COLHEAD_SGEMPHOURS => 5,      
         );
     }
     
@@ -53,6 +59,7 @@ class RQSalesLoader{
     /*** Description: Funcion que procesa los 3 archivos subidos en Upload Sale Tab    ***/
     /*** In Params:   $filePath:    Ruta del archivo.                                  ***/
     /***              $typeFile:    Tipo de archivo 1.Sales 2.Payroll 3.Autopunch      ***/
+    /***                            4.Accesories                                       ***/
     /***              $date_sales:  Fecha del dia al cual pertenecen las ventas        ***/
     /*** Return:      Arreglo                                                          ***/
     /*************************************************************************************/
@@ -75,7 +82,8 @@ class RQSalesLoader{
                     if($Location!='')
                     {
                         $arrSale['Location']    = $Location;        
-                        $arrSale['Sales']       = $Sales;        
+                        $arrSale['Sales']       = $Sales;       
+                        $arrSale['Accesories']  = 0;        
                         $arrSale['GrossProfit'] = $GrossProfit;        
                         $arrSale['Hours']       = '';          
                         $arrSale['AP']          = 0;        
@@ -123,6 +131,16 @@ class RQSalesLoader{
                         $this->arrSales[$Location]=$arrSale;                   
                     }
                 }
+                if($typeFile==4)
+                {
+                    list($Location, $Accesories) =  $rowData;
+                    if($Location!='')
+                    { 
+                        $arrSale['Location']    = $Location;    
+                        $arrSale['Accesories']  = $Accesories; 
+                        $this->arrSales[$Location]=$arrSale;                        
+                    }
+                }
             }     
         }
         return $this->arrSales;
@@ -142,23 +160,23 @@ class RQSalesLoader{
         
         list($sheet, $highRow, $highCol) = $this->loadSheetAndLimits($filePath);
         ## TypeFile es el tipo de proceso que se le debe dar al archivo para la funcion readRowData()
-        $typeFile = 4;
+        $typeFile = 99;
         $this->readHeaders($sheet, self::ROWHEAD_INDEX, $highCol);
         $query  = "";
         $year   = date("Y");     
-        for($row = self::ROWHEAD_INDEX+2; $row <= $highRow; ++$row) 
+        for($row = self::ROWHEAD_INDEX+1; $row <= $highRow; ++$row) 
         {            
             if($rowData = $this->readRowData($sheet, $row, $typeFile))
             {
-                list($Location, $Manager,$Budget,$MgrHours,$EmpHours) =  $rowData;
+                list($Location, $Manager, $Salary, $Budget, $MgrHours, $EmpHours) =  $rowData;
                 if ($query!='') {
                    $query.= ",";
                 }
-                $query.= "(".$Month.",".$year.",'".$Location."','".$Manager."','".$Budget."','".$MgrHours."','".$EmpHours."')";                
+                $query.= "(".$Month.",".$year.",'".$Location."','".$Manager."','".$Salary."','".$Budget."','".$MgrHours."','".$EmpHours."')";                
             }     
         }
 
-        $query  = "INSERT INTO sales_store_goals (Month, Year, Store, Manager, Hours, Hrs_mgr, Hrs_emp) VALUES ".$query;
+        $query  = "INSERT INTO sales_store_goals (Month, Year, Store, Manager, Salary, Hours, Hrs_mgr, Hrs_emp) VALUES ".$query;
         $dbh    = DataBase::getDbh();
         $rst    = $dbh->query($query);
         if($rst)
@@ -273,34 +291,56 @@ class RQSalesLoader{
                 $row)->getValue();
 
             return array($Location, $first_name.' '.$last_name);
-        }
-        ## Lee Store Goals
+        } 
+        ## Lee Accesories
         if($typeFile==4)
         {
             $Location = $sheet->getCellByColumnAndRow(
                 $this->colHeaders[self::COLHEAD_LOCATION],
                 $row)->getValue();
             
+            $Accesories = $sheet->getCellByColumnAndRow(
+                $this->colHeaders[self::COLHEAD_SALES],
+                $row)->getValue();
+
+            return array($Location, $Accesories);
+        }
+        ## Lee Store Goals
+        if($typeFile==99)
+        {
+            $Location = $sheet->getCellByColumnAndRow(
+                $this->colHeaders[self::COLHEAD_LOCATION],
+                $row)->getValue();
+            
             $Manager = $sheet->getCellByColumnAndRow(
-                $this->colHeaders[self::COLHEAD_MANAGER],
+                $this->colHeaders[self::COLHEAD_SGMANAGER],
+                $row)->getValue();
+
+            $Salary = $sheet->getCellByColumnAndRow(
+                $this->colHeaders[self::COLHEAD_SGSALARY],
                 $row)->getValue();
 
             $Budget = $sheet->getCellByColumnAndRow(
-                $this->colHeaders[self::COLHEAD_HOURS],
+                $this->colHeaders[self::COLHEAD_SGHOURS],
                 $row)->getValue();
 
-            $MgrEmpHours = $sheet->getCellByColumnAndRow(
-                $this->colHeaders[self::COLHEAD_MGREMPHOURS],
+            $MgrHours = $sheet->getCellByColumnAndRow(
+                $this->colHeaders[self::COLHEAD_SGMGRHOURS],
+                $row)->getValue();
+
+            $EmpHours = $sheet->getCellByColumnAndRow(
+                $this->colHeaders[self::COLHEAD_SGEMPHOURS],
                 $row)->getValue();
 
             if (isset($Location) && $Location!='Location')
             {
-                ## Como en el excel de Store goals no vienen en columnas separadas y el formato similar que traen es "MANAGER 80 EMPLOYEE 50"
+                /*## Como en el excel de Store goals no vienen en columnas separadas y el formato similar que traen es "MANAGER 80 EMPLOYEE 50"
                 ## Opte simplemente por explotar espacios y obtener los valores de las posiciones 1 y 3, en caso de que se tome un valor
                 ## Erroneo se puede editar unicamente el registro mediante la tabla que aparece en Store Goals en caso de que se halla
                 ## Subido el archivo del mes actual
-                $MgrEmpHours = explode(' ', $MgrEmpHours);
-                return array($Location, $Manager,$Budget,$MgrEmpHours[1],$MgrEmpHours[3]);
+                $MgrEmpHours = explode(' ', $MgrEmpHours);*/
+                //echo '<br>Location: '.$Location.'<br>Manager: '.$Manager.'<br>Salary: '.$Salary.'<br>Budget: '.$Budget.'<br>MgrHours: '.$MgrHours.'<br>EmpHours: '.$EmpHours;
+                return array($Location, $Manager, $Salary, $Budget, $MgrHours, $EmpHours);
             }
             
         }
@@ -317,22 +357,21 @@ class RQSalesLoader{
     /*************************************************************************************/
     public function GuardarVentasProcesadas($arrVentas,$date_sales)
     {
-        $cont=0;
-        $query='';
+        $query      ='';
         $date_sales = date('Y-m-d',strtotime($date_sales));
         foreach ($arrVentas as $venta) 
         {
             ## Selecciono Tienda por Tienda para proceder con el insert
             $tienda = $venta['Location'];
-            list($Location,$Sales,$GrossProfit,$Hours,$AP,$Employee_AP) = array_values($arrVentas[$tienda]);
+            list($Location,$Sales,$Accesories,$GrossProfit,$Hours,$AP,$Employee_AP) = array_values($arrVentas[$tienda]);
             if($query!='')
             {
                 $query.= ",";
             }            
-            $query.= "( '".$date_sales."','".$Location."','".$Sales."','".$GrossProfit."','".$Hours."',".$AP.",'".$Employee_AP."')";
-            $cont++;
+            $query.= "( '".$date_sales."','".$Location."','".$Sales."','".$Accesories."','".$GrossProfit."','".$Hours."',".$AP.",'".$Employee_AP."')";
         }
-        $query  = 'INSERT INTO Sales(date_sale, Store, Sales, GrossProfit, Hours, AP, Employee_AP) VALUES '.$query;
+        $query  = 'INSERT INTO sales(date_sale, Store, Sales, Accesories, GrossProfit, Hours, AP, Employee_AP) VALUES '.$query;
+        //echo $query;
         $dbh    = DataBase::getDbh();
         $rst    = $dbh->query($query);
         if($rst)

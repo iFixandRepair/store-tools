@@ -55,29 +55,37 @@ function print_r(o)
             processData : false,
             //mientras enviamos el archivo
             beforeSend 	: function(){
-                message = "<span class='before'>Uploading Files, Please Wait...</span>";
-                showMessage(message,'us')        
+                message = "Uploading Files, Please Wait...";
+                showMessage(message,'info')        
             },
             //una vez finalizado correctamente
-            success: function(data){            	
+            success: function(data){  
+
+                message = "Uploading Files, Please Wait...";
+                showMessage(message,'info')             	
             	data = JSON.parse(data);
-               /* message = "<span class='success'>Files uploaded successfully.</span>";
-                showMessage(message,'us');*/
                 message = "<span class='error'>An error has occurred, Please Try Again.</span>";
             	if (typeof data.success !== 'undefined') 
             	{				  
             		message = "<span class='error'>An error has occurred, Please Try Again.</span>";
+            		tipoMsg = "danger";
                 	if (data.success==1) 
 	            	{				  
-	                	message = "<span class='success'>Files uploaded successfully.</span>";
+	                	message = "Files uploaded successfully.";
+            			tipoMsg = "success";
+					}
+                	else
+	            	{				  
+	                	message = "Error Uploading, Please Try Again";
+            			tipoMsg = "success";
 					}
 				}
-                showMessage(message,'us');
+                showMessage(message, tipoMsg);
             },
             //si ha ocurrido un error
             error: function(){
-                message = "<span class='error'>An error has occurred, Please Try Again.</span>";
-                showMessage(message,'us');
+                message = "An error has occurred, Please Try Again.";
+                showMessage(message,'danger');
             }
         });        
 	});
@@ -100,31 +108,34 @@ function print_r(o)
             processData : false,
             //mientras enviamos el archivo
            beforeSend 	: function(){
-                message = "<span class='before'>Uploading File, Please Wait...</span>";
-                showMessage(message,'sg')        
+                message = "Uploading File, Please Wait...";
+                showMessage(message,'info')        
             },
             //una vez finalizado correctamente
             success: function(data)
             {
             	data = JSON.parse(data);
-            	message = "<span class='error'>An error has occurred, Please Try Again.</span>";
+            	message = "An error has occurred, Please Try Again.";
+            	tipoMsg = "danger";
             	if (typeof data.success !== 'undefined') 
             	{				  
-            		message = "<span class='error'>An error has occurred, Please Try Again.</span>";
+            		message = "An error has occurred, Please Try Again.";
+            		tipoMsg = "danger";
                 	if (data.success==1) 
 	            	{				  
-	                	message = "<span class='success'>File uploaded successfully.</span>";	                	
+	                	message = "File uploaded successfully.";	
+	                	tipoMsg = "success";                	
 	            		$('#store-goals-table').show();
 						$('#FormUploadStoreGoals').hide();	 
 						LoadStoreGoalsTable ()
 					}
 				}
-                showMessage(message,'sg');
+                showMessage(message,tipoMsg);
             },
             //si ha ocurrido un error
             error: function(){
-                message = "<span class='error'>An error has occurred, Please Try Again.</span>";
-                showMessage(message,'sg');
+                message = "An error has occurred, Please Try Again.";
+                showMessage(message,'danger');
             }
         });        
 	});
@@ -140,17 +151,17 @@ function print_r(o)
         if (typeof date_ini == 'undefined' || date_ini =='') 
         {
         	message = 'Please Fill the Init Date';
-        	showMessage(message,'vr');
+        	showMessage(message,'warning');
         }
         else if (typeof date_end == 'undefined' || date_end =='') 
         {
         	message = 'Please Fill the End Date';
-        	showMessage(message,'vr');
+        	showMessage(message,'warning');
         }
         else if (typeof typeRep == 'undefined' || typeRep =='') 
         {
         	message = 'Please Select a type of report';
-        	showMessage(message,'vr');
+        	showMessage(message,'warning');
         }
         else
 	    {
@@ -173,15 +184,14 @@ function print_r(o)
 	            },
 	            //mientras enviamos el archivo
 	            beforeSend 	: function(){
-	                message = "<span class='before'>Generating Report, Please Wait...</span>";
-	                showMessage(message,'vr')        
+	                message = "Generating Report, Please Wait...";
+	                showMessage(message,'info')        
 	            },
 	            //una vez finalizado correctamente
 	            success: function(data){            	
 	            	data = JSON.parse(data);
 	            	if (typeof data.data !== 'undefined') 
 	            	{				  
-	            		message = "<span class='error'>An error has occurred, Please Try Again.</span>";
 	                	if (data.data!='') 
 		            	{	
 		            		if(typeRep==1)
@@ -207,6 +217,7 @@ function print_r(o)
 						            { "data": "Store" 				},
 						            { "data": "Manager" 			},
 						            { "data": "Sales" 				},
+						            { "data": "Accesories" 			},
 						            { "data": "GrossProfit" 		},
 						            { "data": "Hours" 				},
 						            { "data": "Budget" 				},
@@ -228,29 +239,90 @@ function print_r(o)
 						            }
 						        ]
 						    } );
-						    showMessage('','vr');
+						    message = "Sales Report Loaded Successfully.";
+            				tipoMsg = "success";
 						}
 						else
 						{
 							$('#view-report-table').hide();
+							message = "No data available in selected dates";
+							tipoMsg = "info";
 						}
 					}
-	                showMessage('','vr');
+					else
+					{
+						message = "An error has occurred, Please Try Again.";
+						tipoMsg = "danger";
+					}
+					showMessage(message,tipoMsg);
 	            },
 	            //si ha ocurrido un error
 	            error: function(){
-	                message = "<span class='error'>An error has occurred, Please Try Again.</span>";
-	                showMessage(message,'vr');
+	                message = "An error has occurred, Please Try Again.";
+	                showMessage(message,'danger');
 	            }
 	        });        
 	   	}
 	});
 
-	function showMessage(message,tab)
+	function showMessage(message,type)
 	{
-		console.log("Tab: "+tab+message)
-	    $("#messages-"+tab).html("").show();
-	    $("#messages-"+tab).html(message);
+		/*info
+		success
+		warning
+		danger*/
+		//console.log("Tab: "+tab+message)
+	   /*$("#messages-"+tab).html("").show();
+	    $("#messages-"+tab).html(message);*/
+	    icon = type;
+	    if(icon=='success')
+	    {
+	    	icon = 'ok'
+	    }
+	    if(icon=='danger')
+	    {
+	    	icon = 'remove'
+	    }
+	    $.notify({
+			// options
+			icon: 'glyphicon glyphicon-'+icon+'-sign',
+			//title: 'Bootstrap notify',
+			message: message,
+			//url: 'https://github.com/mouse0270/bootstrap-notify',
+			//target: '_blank'
+		},{
+			// settings
+			element: 'body',
+			position: null,
+			type: type,
+			allow_dismiss: true,
+			newest_on_top: true,
+			showProgressbar: false,
+			placement: {
+				from: "top",
+				align: "center"
+			},
+			offset: 20,
+			spacing: 10,
+			z_index: 1031,
+			delay: 5000,
+			timer: 1000,
+			animate: {
+				enter: 'animated fadeInDown',
+				exit: 'animated fadeOutUp'
+			},			
+			icon_type: 'class',
+			template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+				'<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+				'<span data-notify="icon"></span> ' +
+				'<span data-notify="title">{1}</span> ' +
+				'<span data-notify="message">{2}</span>' +
+				'<div class="progress" data-notify="progressbar">' +
+					'<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+				'</div>' +
+				'<a href="{3}" target="{4}" data-notify="url"></a>' +
+			'</div>' 
+		});
 	}
 
 	function LoadStoreGoalsTable ()
@@ -261,8 +333,8 @@ function print_r(o)
             data 		: { opt : 'load' },
             beforeSend 	: function()
             {
-                message = "<span class='before'>Loading Table, Please Wait...</span>";
-                showMessage(message,'sg')        
+                message = "Loading Store Goals, Please Wait...";
+                showMessage(message,'info')        
             },
             //una vez finalizado correctamente
             success: function(data)
@@ -270,7 +342,6 @@ function print_r(o)
             	data = JSON.parse(data);
             	if (typeof data.data !== 'undefined') 
             	{				  
-            		message = "<span class='error'>An error has occurred, Please Try Again.</span>";
                 	if (data.data!='') 
 	            	{			  
 	                	tableSG = $('#store-goals-table').DataTable( 
@@ -295,7 +366,8 @@ function print_r(o)
 								}
 					        ]
 					    } );
-					    showMessage('','sg');
+					    message = "Store Goals Loaded Successfully.";
+                		showMessage(message,'success') 
 
 					    $('#store-goals-table .Edit-control').on('click', function(){
 				        	//print_r(tableSG.row(this).data());
@@ -344,33 +416,39 @@ function print_r(o)
 						            },
 						            //mientras enviamos el archivo
 						           beforeSend 	: function(){
-						                message = "<span class='before'>Uploading File, Please Wait...</span>";
-						                showMessage(message,'sg')        
+						                message = "Saving, Please Wait...";
+						                showMessage(message,'info')        
 						            },
 						            //una vez finalizado correctamente
 						            success: function(data)
 						            {
-						            	data = JSON.parse(data);
-						            	message = "<span class='error'>An error has occurred, Please Try Again.</span>";
+						            	data 	= JSON.parse(data);
+						            	message = "An error has occurred, Please Try Again.";
+            							tipoMsg = "danger";
 						            	if (typeof data.success !== 'undefined') 
-						            	{				  
-						            		message = "<span class='error'>An error has occurred, Please Try Again.</span>";
+						            	{	
 						                	if (data.success==1) 
 							            	{				  
-							                	message = "<span class='success'>File updated successfully.</span>";
+							                	message = "File saved successfully.";
+            									tipoMsg = "success";
 							                	$('#EditStoreGoal').modal('hide');
 												$( "#btn-save_MDLSG").off();							                	
 												$( "#store-goals-table .Edit-control").off();
 												tableSG.destroy();
 												LoadStoreGoalsTable ()
 											}
-										}
-						                showMessage(message,'sg');
+											else
+											{
+												message = "An error saving has occurred, Please Try Again.";
+            									tipoMsg = "danger";
+											}
+										}		
+										showMessage(message,tipoMsg);				                
 						            },
 						            //si ha ocurrido un error
 						            error: function(){
-						                message = "<span class='error'>An error has occurred, Please Try Again.</span>";
-						                showMessage(message,'sg');
+						                message = "An error has occurred, Please Try Again.";
+						                showMessage(message,'danger');
 						            }
 						        }); 							           
 							});
@@ -378,16 +456,17 @@ function print_r(o)
 					}
 					else
 					{
+						message = "Please upload Store Goals...";
+               			showMessage(message,'info') 
 						$('#store-goals-table').hide();
-						$('#FormUploadStoreGoals').show();
+						$('.formulario-sg').show();
 					}
-				}
-                showMessage('','sg');            	 
+				}          	 
             },
             //si ha ocurrido un error
             error: function(){
-                message = "<span class='error'>An error has occurred, Please Reload.</span>";
-                showMessage(message,'sg');
+                message = "An error has occurred, Please Reload.";
+                showMessage(message,'danger');
             }
         });  
 	}
