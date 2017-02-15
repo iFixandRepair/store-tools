@@ -225,7 +225,13 @@ function print_r(o)
 						            { "data": "OT" 					},
 						            { "data": "MGR_req_hrs" 		},
 						            { "data": "MGR_HRS" 			},
-						            { "data": "MGR_hrs_plus/minus"	}						           
+						            { "data": "MGR_hrs_plus/minus"	},
+						            {
+										"className"		: 'Edit-comments',
+										"orderable"		: false,
+										"data"			: null,
+										"defaultContent": '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>'
+									}						           
 						        ],
 						        dom: 'Bfrtip',
 						        buttons: [
@@ -241,6 +247,72 @@ function print_r(o)
 						    } );
 						    message = "Sales Report Loaded Successfully.";
             				tipoMsg = "success";
+
+            				 $('#view-report-table .Edit-comments').on('click', function(){
+				        	//print_r(tableSG.row(this).data());
+					        var arrRow = tableVR.row(this).data();
+					        //alert( 'You clicked on '+arrRow['Store']+'\'s row' );
+					        $('#AddStoreComment #MDLVR_Store').val(arrRow['Store']);
+					        $('#AddStoreComment #NameStoreComment').html(arrRow['Store']);
+
+					        $('#AddStoreComment').modal('show');
+
+					        $("#btn-save_MDLVR").click(
+							function()
+							{ 
+								var store 		= $('#AddStoreComment #MDLVR_Store').val()
+				        		var message		= $('#AddStoreComment #MDLVR_Message').val();
+				        		
+						        $.ajax({
+						            url			: 'services/operations-vr.php',  
+						            type 		: 'POST',
+						            // Form data
+						            //datos del formulario
+						            data 		: 
+						            {
+			            				opt 	: 'saveComment' 
+			            				,store 	: store
+			            				,message: message
+						            },
+						            //mientras enviamos el archivo
+						           beforeSend 	: function(){
+						                message = "Saving, Please Wait...";
+						                showMessage(message,'info')        
+						            },
+						            //una vez finalizado correctamente
+						            success: function(data)
+						            {
+						            	data 	= JSON.parse(data);
+						            	message = "An error has occurred, Please Try Again.";
+            							tipoMsg = "danger";
+						            	if (typeof data.success !== 'undefined') 
+						            	{	
+						                	if (data.success==1) 
+							            	{				  
+							                	message = "File saved successfully.";
+            									tipoMsg = "success";
+							                	$('#AddStoreComment').modal('hide');
+												$( "#btn-save_MDLVR").off();							                	
+												$( "#view-report-table .Edit-comments").off();
+												tableVR.destroy();
+											}
+											else
+											{
+												message = "An error saving has occurred, Please Try Again.";
+            									tipoMsg = "danger";
+											}
+										}		
+										showMessage(message,tipoMsg);				                
+						            },
+						            //si ha ocurrido un error
+						            error: function(){
+						                message = "An error has occurred, Please Try Again.";
+						                showMessage(message,'danger');
+						            }
+						        }); 							           
+							});
+					    } ); 
+
 						}
 						else
 						{

@@ -58,7 +58,9 @@ class SalesReport{
             ,ROUND(SUM(s.Hours),2)                      AS 'Hours'
             ,ROUND(SUM(s.OT),2)                         AS 'OT'    
             -- ,sg.Hrs_mgr                                 AS 'MGR_req_hrs'
-            ,ROUND(SUM(sp.RegularTime),2)               AS 'MGR_HRS'";
+            ,ROUND(SUM(sp.RegularTime),2)               AS 'MGR_HRS'
+            ,MONTH(s.date_sale)                         AS 'MONTH' 
+            ,YEAR(s.date_sale)                         AS 'YEAR' ";
 
         if($typeRep==1)
         {

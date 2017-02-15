@@ -20,8 +20,8 @@ if (isset($_REQUEST['opt']))
 		$date_end	= $_REQUEST['date_end'];
 		$typeRep 	= $_REQUEST['typeRep'];
 		
-		$CLS_StoreGoals = new SalesReport();
-		$arr = $CLS_StoreGoals->getSalesReport($date_ini,$date_end,$typeRep );	
+		$CLS_ViewReport = new SalesReport();
+		$arr = $CLS_ViewReport->getSalesReport($date_ini,$date_end,$typeRep );	
 		## En caso de que sea por meses, convierto el numero de mes al nombre	
 		if($typeRep==3)
 		{
@@ -34,6 +34,21 @@ if (isset($_REQUEST['opt']))
 			
 		}
 		echo '{"data": '.json_encode($arr).' }';
+	}
+	if($opt=='saveComment')
+	{		
+		$store 		= $_REQUEST['store'];
+		$message	= $_REQUEST['message'];		
+		
+		$CLS_ViewReport = new SalesReport();
+		//$arr = $CLS_ViewReport->setStoreComment($store,$message,$mes,$year);
+		$objDateTime 	= new DateTime('NOW');
+		$mes 			= $objDateTime->format('m');
+		$year 			= $objDateTime->format('Y');
+
+		echo 'Va a guardar: <br>'.$store.', Mensaje: '.$message.', Mes: '.$mes.', Año: '.$year;
+		
+		//echo '{"data": '.json_encode($arr).' }';
 	}	
 
 }
