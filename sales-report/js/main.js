@@ -169,8 +169,9 @@ function print_r(o)
 			{
         		tableVR.destroy();
 			}
+			GenerarReporteVR (date_ini,date_end,typeRep)
 	        //hacemos la petición ajax  
-	        $.ajax({
+	        /*$.ajax({
 	            url			: 'services/operations-vr.php',  
 	            type 		: 'POST',
 	            // Form data
@@ -188,7 +189,7 @@ function print_r(o)
 	                showMessage(message,'info')        
 	            },
 	            //una vez finalizado correctamente
-	            success: function(data){            	
+	            success: function(data){
 	            	data = JSON.parse(data);
 	            	if (typeof data.data !== 'undefined') 
 	            	{				  
@@ -213,19 +214,21 @@ function print_r(o)
 						        data 			: data.data,
 						        columns 		: 
 						        [	
-						            { "data": "Date" 				},
-						            { "data": "Store" 				},
-						            { "data": "Manager" 			},
-						            { "data": "Sales" 				},
-						            { "data": "Accesories" 			},
-						            { "data": "GrossProfit" 		},
-						            { "data": "Hours" 				},
-						            { "data": "Budget" 				},
-						            { "data": "Budget_plus/minus" 	},
-						            { "data": "OT" 					},
-						            { "data": "MGR_req_hrs" 		},
-						            { "data": "MGR_HRS" 			},
-						            { "data": "MGR_hrs_plus/minus"	},
+						            { "data": "Date" 						},
+						            { "data": "Store" 						},
+						            { "data": "Manager" 					},
+						            { "data": "Salary" 						},
+						            { "data": "Sales" 						},
+						            { "data": "Accesories" 					},
+						            { "data": "GrossProfit" 				},
+						            { "data": "Hours" 						},
+						            { "data": "Budget" 						},
+						            { "data": "Budget_plus/minus" 			},
+						            { "data": "OT" 							},
+						            { "data": "MGR_req_hrs" 				},
+						            { "data": "MGR_HRS" 					},
+						            { "data": "MGR_hrs_plus/minus"			},
+						            { "data": "Message",  "bVisible": false	},
 						            {
 										"className"		: 'Edit-comments',
 										"orderable"		: false,
@@ -248,21 +251,26 @@ function print_r(o)
 						    message = "Sales Report Loaded Successfully.";
             				tipoMsg = "success";
 
-            				 $('#view-report-table .Edit-comments').on('click', function(){
+            				$('#view-report-table .Edit-comments').on('click', function(){
 				        	//print_r(tableSG.row(this).data());
 					        var arrRow = tableVR.row(this).data();
 					        //alert( 'You clicked on '+arrRow['Store']+'\'s row' );
-					        $('#AddStoreComment #MDLVR_Store').val(arrRow['Store']);
-					        $('#AddStoreComment #NameStoreComment').html(arrRow['Store']);
+						    $('#AddStoreComment #MDLVR_Store').val(arrRow['Store']);
+						    $('#AddStoreComment #NameStoreComment').html(arrRow['Store']);
+						    if(arrRow['Message']!="")
+						    {
+						    	$('#AddStoreComment #MDLVR_Message').val(arrRow['Message']);
+						    }
+						    $('#AddStoreComment').modal('show');
 
-					        $('#AddStoreComment').modal('show');
-
-					        $("#btn-save_MDLVR").click(
+						    $("#btn-save_MDLVR").click(
 							function()
 							{ 
-								var store 		= $('#AddStoreComment #MDLVR_Store').val()
-				        		var message		= $('#AddStoreComment #MDLVR_Message').val();
-				        		
+								var store 		= arrRow['Store'];
+								var messages 	= $('#AddStoreComment #MDLVR_Message').val();
+								var month		= arrRow['MONTH'];
+								var year		= arrRow['YEAR'];
+								
 						        $.ajax({
 						            url			: 'services/operations-vr.php',  
 						            type 		: 'POST',
@@ -270,9 +278,11 @@ function print_r(o)
 						            //datos del formulario
 						            data 		: 
 						            {
-			            				opt 	: 'saveComment' 
-			            				,store 	: store
-			            				,message: message
+										opt 	: 'saveComment' 
+										,store 	: store
+										,message: message
+										,month  : month
+										,year   : year
 						            },
 						            //mientras enviamos el archivo
 						           beforeSend 	: function(){
@@ -284,22 +294,22 @@ function print_r(o)
 						            {
 						            	data 	= JSON.parse(data);
 						            	message = "An error has occurred, Please Try Again.";
-            							tipoMsg = "danger";
+										tipoMsg = "danger";
 						            	if (typeof data.success !== 'undefined') 
 						            	{	
 						                	if (data.success==1) 
 							            	{				  
 							                	message = "File saved successfully.";
-            									tipoMsg = "success";
+												tipoMsg = "success";
 							                	$('#AddStoreComment').modal('hide');
-												$( "#btn-save_MDLVR").off();							                	
-												$( "#view-report-table .Edit-comments").off();
-												tableVR.destroy();
+												//$( "#btn-save_MDLVR").off();							                	
+												//$( "#view-report-table .Edit-comments").off();
+												tableVR.reload();
 											}
 											else
 											{
 												message = "An error saving has occurred, Please Try Again.";
-            									tipoMsg = "danger";
+												tipoMsg = "danger";
 											}
 										}		
 										showMessage(message,tipoMsg);				                
@@ -333,7 +343,7 @@ function print_r(o)
 	                message = "An error has occurred, Please Try Again.";
 	                showMessage(message,'danger');
 	            }
-	        });        
+	        }); */       
 	   	}
 	});
 
@@ -395,6 +405,189 @@ function print_r(o)
 				'<a href="{3}" target="{4}" data-notify="url"></a>' +
 			'</div>' 
 		});
+	}
+
+	function GenerarReporteVR (date_ini,date_end,typeRep)
+	{
+		$.ajax({
+	        url			: 'services/operations-vr.php',  
+	        type 		: 'POST',
+	        // Form data
+	        //datos del formulario           
+	        data 		: 
+	        {
+				opt 		: 'get' 
+				,date_ini 	: date_ini
+				,date_end 	: date_end
+				,typeRep 	: typeRep
+	        },
+	        //mientras enviamos el archivo
+	        beforeSend 	: function(){
+	            message = "Generating Report, Please Wait...";
+	            showMessage(message,'info')        
+	        },
+	        //una vez finalizado correctamente
+	        success: function(data){
+	        	data = JSON.parse(data);
+	        	if (typeof data.data !== 'undefined') 
+	        	{				  
+	            	if (data.data!='') 
+	            	{	
+	            		if(typeRep==1)
+	            		{
+	            			descTypeRep = 'Daily';
+	            		}	
+	            		if(typeRep==2)
+	            		{
+	            			descTypeRep = 'Weekly';
+	            		}	
+	            		if(typeRep==3)
+	            		{
+	            			descTypeRep = 'Monthly';
+	            		}		  
+	                	tableVR = $('#view-report-table').DataTable( 
+		            	{
+		            		aLengthMenu		: [[25, 50, 75, -1], [25, 50, 75, "All"]],
+	    					iDisplayLength	: 25,
+					        data 			: data.data,
+					        columns 		: 
+					        [	
+					            { "data": "Date" 						},
+					            { "data": "Store" 						},
+					            { "data": "Manager" 					},
+					            { "data": "Salary" 						},
+					            { "data": "Sales" 						},
+					            { "data": "Accesories" 					},
+					            { "data": "GrossProfit" 				},
+					            { "data": "Hours" 						},
+					            { "data": "Budget" 						},
+					            { "data": "Budget_plus/minus" 			},
+					            { "data": "OT" 							},
+					            { "data": "MGR_req_hrs" 				},
+					            { "data": "MGR_HRS" 					},
+					            { "data": "MGR_hrs_plus/minus"			},
+					            { "data": "Message",  "bVisible": false	},
+					            {
+									"className"		: 'Edit-comments',
+									"orderable"		: false,
+									"data"			: null,
+									"defaultContent": '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>'
+								}						           
+					        ],
+					        dom: 'Bfrtip',
+					        buttons: [
+					            {
+					                extend: 'excelHtml5',
+					                title: 'Sales Report '+descTypeRep+' '+date_ini.replace("/", "-")+ ' To '+date_end.replace("/", "-")
+					            },
+					            {
+					                extend: 'pdfHtml5',
+					                title: 'Sales Report '+descTypeRep+' '+date_ini.replace("/", "-")+ ' To '+date_end.replace("/", "-")
+					            }
+					        ]
+					    } );
+					    message = "Sales Report Loaded Successfully.";
+	    				tipoMsg = "success";
+
+	    				$('#view-report-table .Edit-comments').on('click', function(){
+			        	//print_r(tableSG.row(this).data());
+				        var arrRow = tableVR.row(this).data();
+				        //alert( 'You clicked on '+arrRow['Store']+'\'s row' );
+					    $('#AddStoreComment #MDLVR_Store').val(arrRow['Store']);
+					    $('#AddStoreComment #NameStoreComment').html(arrRow['Store']);
+					    if(arrRow['Message']!="")
+					    {
+					    	$('#AddStoreComment #MDLVR_Message').val(arrRow['Message']);
+					    }
+					    $('#AddStoreComment').modal('show');
+					    $('#AddStoreComment').on('hidden.bs.modal', function () {
+						    //alert('se cerro')
+						    $( "#btn-save_MDLVR").off();	
+						    //$( "#view-report-table .Edit-comments").off();
+						})
+
+					    $("#btn-save_MDLVR").click(
+						function()
+						{ 
+							var store 		= arrRow['Store'];
+							var comment 	= $('#AddStoreComment #MDLVR_Message').val();
+							var month		= arrRow['MONTH'];
+							var year		= arrRow['YEAR'];
+							
+					        $.ajax({
+					            url			: 'services/operations-vr.php',  
+					            type 		: 'POST',
+					            // Form data
+					            //datos del formulario
+					            data 		: 
+					            {
+									opt 	: 'saveComment' 
+									,store 	: store
+									,message: comment
+									,month  : month
+									,year   : year
+					            },
+					            //mientras enviamos el archivo
+					           beforeSend 	: function(){
+					                message = "Saving, Please Wait...";
+					                showMessage(message,'info')        
+					            },
+					            //una vez finalizado correctamente
+					            success: function(data)
+					            {
+					            	data 	= JSON.parse(data);
+					            	message = "An error has occurred, Please Try Again.";
+									tipoMsg = "danger";
+					            	if (typeof data.success !== 'undefined') 
+					            	{	
+					                	if (data.success==1) 
+						            	{				  
+						                	message = "File saved successfully.";
+											tipoMsg = "success";
+						                	$('#AddStoreComment').modal('hide');
+											$( "#btn-save_MDLVR").off();							                	
+											$( "#view-report-table .Edit-comments").off();
+											tableVR.destroy();
+											GenerarReporteVR (date_ini,date_end,typeRep);
+										}
+										else
+										{
+											message = "An error saving has occurred, Please Try Again.";
+											tipoMsg = "danger";
+										}
+									}		
+									showMessage(message,tipoMsg);				                
+					            },
+					            //si ha ocurrido un error
+					            error: function(){
+					                message = "An error has occurred, Please Try Again.";
+					                showMessage(message,'danger');
+					            }
+					        }); 							           
+						});
+				    } ); 
+
+					}
+					else
+					{
+						$('#view-report-table').hide();
+						message = "No data available in selected dates";
+						tipoMsg = "info";
+					}
+				}
+				else
+				{
+					message = "An error has occurred, Please Try Again.";
+					tipoMsg = "danger";
+				}
+				showMessage(message,tipoMsg);
+	        },
+	        //si ha ocurrido un error
+	        error: function(){
+	            message = "An error has occurred, Please Try Again.";
+	            showMessage(message,'danger');
+	        }
+	    }); 
 	}
 
 	function LoadStoreGoalsTable ()

@@ -32,7 +32,7 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 	{
 		## Selecciono cada tienda
 		$tienda 		 			= $venta['Location'];
-		## Valido si la tienda tiene ventas de Accesprops
+		## Valido si la tienda tiene ventas de Accesorios
 		if(isset($arrAccesories[$tienda]))
 		{			
 			$Accesorios 			= $arrAccesories[$tienda]['Accesories'];
@@ -116,6 +116,9 @@ function uploadFile($sourceFile,$typeFile,$date_sales)
 	if ($name_file && move_uploaded_file($_FILES[$sourceFile]['tmp_name'], $target_file)) 
 	{
 		$rst = $rqLoader->loadDailySales($target_file,$typeFile,$date_sales);
+		##Borro los archivos procesados
+		chmod($target_file, 0666);
+		unlink($target_file);
 		return $rst;  
 	} 
 	else 

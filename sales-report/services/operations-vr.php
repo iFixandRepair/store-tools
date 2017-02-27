@@ -28,7 +28,8 @@ if (isset($_REQUEST['opt']))
 			foreach ($arr as $row) 
 			{
 				$objDateTime = new DateTime('NOW');
-				$SrtFecha = $objDateTime->format('m').'/'.$row->Date.'/'.$objDateTime->format('Y');
+				$SrtFecha = $row->Date.'/'.$row->Date.'/'.$objDateTime->format('Y');
+				//echo $SrtFecha.'<br>';
 				$row->Date = date('F',strtotime($SrtFecha));
 			}
 			
@@ -38,17 +39,14 @@ if (isset($_REQUEST['opt']))
 	if($opt=='saveComment')
 	{		
 		$store 		= $_REQUEST['store'];
-		$message	= $_REQUEST['message'];		
+		$message	= $_REQUEST['message'];	
+		$mes 		= $_REQUEST['month'];
+		$year		= $_REQUEST['year'];		
 		
 		$CLS_ViewReport = new SalesReport();
-		//$arr = $CLS_ViewReport->setStoreComment($store,$message,$mes,$year);
-		$objDateTime 	= new DateTime('NOW');
-		$mes 			= $objDateTime->format('m');
-		$year 			= $objDateTime->format('Y');
-
-		echo 'Va a guardar: <br>'.$store.', Mensaje: '.$message.', Mes: '.$mes.', Año: '.$year;
-		
-		//echo '{"data": '.json_encode($arr).' }';
+		$rst = $CLS_ViewReport->setStoreComment($store,$message,$mes,$year);
+		//echo 'Va a guardar: <br>'.$store.', Mensaje: '.$message.', Mes: '.$mes.', Año: '.$year;	
+		echo '{"success": '.$rst.' }';
 	}	
 
 }
