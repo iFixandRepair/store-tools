@@ -1,6 +1,7 @@
 <?php
 require_once 'PHPExcel/Classes/PHPExcel/IOFactory.php';
 require_once("DataBase.php");
+require_once("StoreBox.php");
 
 class RQProductDetailLoader{
 
@@ -43,6 +44,7 @@ class RQProductDetailLoader{
         $this->readHeaders($sheet, self::ROWHEAD_INDEX, $highCol);
         $query = "";
         $delqry = "";
+        $initialDate = 0;
         for($row = self::ROWHEAD_INDEX+1; $row <= $highRow; ++$row) {            
             if($rowData = $this->readRowData($sheet, $row)){
                 if($query){
@@ -51,9 +53,11 @@ class RQProductDetailLoader{
                 }
                 list($invoiceId, $rqStoreId, $storeName, $invoiceDate, $productSku, 
                     $productName, $boxName, $qty) =  $rowData;
-            $query .= "('$invoiceId', '$productSku', $qty, $rqStoreId, '$storeName', "
-                ." FROM_UNIXTIME($invoiceDate), '$productName', '$boxName')\n";
-            $delqry .= "'$invoiceId'";
+                $query .= "('$invoiceId', '$productSku', $qty, $rqStoreId, '$storeName', "
+                    ." FROM_UNIXTIME($invoiceDate), '$productName', '$boxName')\n";
+                $delqry .= "'$invoiceId'";
+                if($invoiceDate < $initialDate)
+                    $initialDate = $invoiceDate;
             }     
         }
         $delqry = "DELETE FROM rq_product_detail WHERE invoice_id IN ($delqry)";
@@ -61,10 +65,15 @@ class RQProductDetailLoader{
         $dbh = DataBase::getDbh();
         $dbh->query($delqry);
         $dbh->query($query);
+        StoreBox::saveAllExpectedContent($initialDate);
     }
 
     private function loadSheetAndLimits($filePath){
+        $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_gzip;
+        PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
+        $readFilter = new CustomFilter();
         $reader = PHPExcel_IOFactory::createReader('Excel5');
+        $reader->setReadFilter($readFilter);
         $reader->setReadDataOnly(TRUE);
         $PHPExcel = $reader->load($filePath);
         $sheet = $PHPExcel->getActiveSheet();
@@ -124,5 +133,19 @@ class RQProductDetailLoader{
         }
         return substr($productName, 0, $minSepPos-1);
     }
+}
+
+class CustomFilter implements PHPExcel_Reader_IReadFilter 
+{ 
+    public function readCell($column, $row, $worksheetName = '') 
+    { 
+        // Read rows 1 to 7 and columns A to E only 
+        //if ($row >= 1 && $row <= 7) { 
+            if (in_array($column,array('A', 'B', 'F', 'M', 'I', 'O'))) { 
+                return true; 
+            } 
+        //} 
+        return false; 
+    } 
 }
 ?>

@@ -11,10 +11,11 @@ $auth_data = json_decode(
 
 $store = Store::getStoreByEmail($auth_data->email);
 $openBox = StoreBox::getCurrentOpenBox($store->getStoreId());
-if(isset($_POST["trackingNumber"])){
+if($openBox != null){
     $openBox->setShipDate(time());
     $openBox->setShipMethod("UPS");
-    $openBox->setTrackingNumber($_POST["trackingNumber"]);
+    $openBox->setTrackingNumber("Pending");
     $openBox->updateShippingInfo();
+    $openBox->saveExpectedContent();
 }
 ?>

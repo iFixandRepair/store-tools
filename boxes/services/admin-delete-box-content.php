@@ -9,10 +9,11 @@ $auth_data = json_decode(
 	. $_POST["id_token"])
 );
 
-$sentBoxes = StoreBox::getAllSentBoxes();
-echo json_encode(
-	array(
-		"sentBoxes" => array_values($sentBoxes)
-	)
-);
+if(isset($_POST["boxName"])
+&& isset($_POST["boxId"])){
+    $box = new StoreBox();
+    $box->setBoxId($_POST["boxId"]);
+    $box->deleteBoxContent($_POST["boxName"]);
+}
+    
 ?>
