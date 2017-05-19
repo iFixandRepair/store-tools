@@ -107,13 +107,75 @@ textarea {
     animation: blinking 1s infinite;
 }
 
+@keyframes blinkingText {
+    0%   {color: gray;}
+    66%  {color: gainsboro;}
+    100% {color: gray;}
+}
+
+/* The element to apply the animation to */
+.blinkerText {
+    -webkit-animation: blinkingText 2s infinite;
+    animation: blinkingText 2s infinite;
+}
+
 td.details-control {
     cursor: pointer;
     text-align: center;
 }
 
-div#sentBoxes {
+div#sentBoxes, div#openBoxes, div#newBox {
     padding-top: 20px;
+}
+
+.sent-detail>tbody{
+    display: block;
+    max-height: 405px;
+    overflow: auto;
+}
+
+.sent-detail tr>td:nth-child(2), .sent-detail tr>th:nth-child(2){
+    width: 15%;
+}
+
+.sent-detail>thead, .sent-detail>tbody>tr, .sent-detail>tfoot{
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.sent-detail>thead, .sent-detail>tbody>tr, .sent-detail>tfoot{
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.sent-detail>thead, .sent-detail>tfoot{    
+    width: 98.5%;
+}
+
+.sent-detail .quantity, .sent-detail .box-name-input{
+    width: 100% !important;
+    padding: 0 6px;
+    height: 1.5em;
+}
+
+.admin-detail-table tr td:nth-child(2),
+.admin-detail-table tr th:nth-child(2),
+.admin-detail-table thead tr:nth-child(1) th:nth-child(3),
+.admin-detail-table thead tr:nth-child(2) th:nth-child(7),
+.admin-detail-table tr td:nth-child(7),
+.admin-detail-table tfoot th:nth-child(7),
+.admin-detail-table thead tr:nth-child(1) th:nth-child(4),
+.admin-detail-table thead tr:nth-child(2) th:nth-child(9),
+.admin-detail-table tr td:nth-child(9),
+.admin-detail-table tfoot th:nth-child(9),
+.admin-detail-table thead tr:nth-child(1) th:nth-child(5),
+.admin-detail-table thead tr:nth-child(2) th:nth-child(11),
+.admin-detail-table tr td:nth-child(11),
+.admin-detail-table tfoot th:nth-child(11)
+{
+    border-right: solid thick #ddd;
 }
 
 /* ==========================================================================

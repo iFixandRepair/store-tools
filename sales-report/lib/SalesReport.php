@@ -73,10 +73,10 @@ class SalesReport{
                     ,ROUND((sg.Hours / 7),0)                            AS 'Budget'
                     ,ROUND(SUM(s.Hours) - (sg.Hours / 7),2)             AS 'Budget_plus/minus'
                     ,ROUND((sg.Hrs_mgr / 7),2)                          AS 'MGR_req_hrs' 
-                    ,ROUND((sg.Hrs_mgr / 7) - SUM(sp.RegularTime),2)    AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
+                    ,ROUND((sg.Hrs_mgr / 7) - SUM(IFNULL(sp.RegularTime,0)),2)    AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
                 FROM 
                     sales s
-                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store
+                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store and sg.Month = MONTH(s.date_sale)  and sg.Year = YEAR(s.date_sale) 
                     INNER JOIN sales_payroll sp ON s.Store = sp.Store AND s.date_sale = sp.date_sale AND sg.Manager = sp.Employee
                     LEFT JOIN sales_comments sc ON sc.store = s.Store AND sc.month = MONTH(s.date_sale) AND sc.year = YEAR(s.date_sale)  
                 WHERE
@@ -91,20 +91,20 @@ class SalesReport{
             ## Consulta en caso de que se desee Semanal
             $query = " 
                 SELECT
-                    WEEK(s.date_sale)                           AS 'Date' 
+                    WEEK(s.date_sale,1)                           AS 'Date' 
                     ,sg.Hours                                   AS 'Budget'
                     ,ROUND(SUM(s.Hours) - sg.Hours ,2)          AS 'Budget_plus/minus' 
                     ,sg.Hrs_mgr                                 AS 'MGR_req_hrs' 
-                    ,ROUND(sg.Hrs_mgr - SUM(sp.RegularTime),2)  AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
+                    ,ROUND(sg.Hrs_mgr - SUM(IFNULL(sp.RegularTime,0)),2)  AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
                 FROM 
                     sales s
-                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store
+                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store and sg.Month = MONTH(s.date_sale)  and sg.Year = YEAR(s.date_sale) 
                     INNER JOIN sales_payroll sp ON s.Store = sp.Store AND s.date_sale = sp.date_sale AND sg.Manager = sp.Employee
                     LEFT JOIN sales_comments sc ON sc.store = s.Store AND sc.month = MONTH(s.date_sale) AND sc.year = YEAR(s.date_sale)  
                 WHERE
                     s.date_sale BETWEEN  ?  AND   ? 
                 GROUP BY
-                    WEEK(s.date_sale) 
+                    WEEK(s.date_sale,1) 
                     ,s.Store
                     ,sg.Manager";
         }
@@ -117,10 +117,10 @@ class SalesReport{
                     ,ROUND((sg.Hours * 4),0)                            AS 'Budget'
                     ,ROUND(SUM(s.Hours) - (sg.Hours * 4),2)             AS 'Budget_plus/minus'
                     ,ROUND((sg.Hrs_mgr * 4),2)                          AS 'MGR_req_hrs' 
-                    ,ROUND((sg.Hrs_mgr * 4) - SUM(sp.RegularTime),2)    AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
+                    ,ROUND((sg.Hrs_mgr * 4) - SUM(IFNULL(sp.RegularTime,0)),2)    AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
                 FROM 
                     sales s
-                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store
+                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store and sg.Month = MONTH(s.date_sale)  and sg.Year = YEAR(s.date_sale) 
                     INNER JOIN sales_payroll sp ON s.Store = sp.Store AND s.date_sale = sp.date_sale AND sg.Manager = sp.Employee
                     LEFT JOIN sales_comments sc ON sc.store = s.Store AND sc.month = MONTH(s.date_sale) AND sc.year = YEAR(s.date_sale)  
                 WHERE

@@ -6,20 +6,36 @@ function onSignIn(googleUser) {
 	var tableVR			= '';	
 	var TabActual 		= '';
 
-	/*var o = data;
-var salida = '';
-for (var p in o) {
-salida += p + ': ' + o[p] + '\n';
-}
-alert(salida);*/
-function print_r(o)
-{
-	var salida = '';
-	for (var p in o) {
-	salida += p + ': ' + o[p] + '\n';
+	function print_r(o)
+	{
+		var salida = '';
+		for (var p in o) {
+		salida += p + ': ' + o[p] + '\n';
+		}
+		console.log(salida);
 	}
-	console.log(salida);
-}
+
+
+	/******************************************************************/
+	/************ VALIDO CORREOS PERMITIDOS PARA PESTAÑAS *************/
+	/******************************************************************/	
+	if(profile.getEmail()=='webdeveloper@ifixandrepair.com' || profile.getEmail()=='systems@ifixandrepair.com') //Julian y Danilo
+	{
+		$("#TabUS").show();
+		$("#TabSG").show();
+	}
+	if(profile.getEmail()!='pm2@ifixandrepair.com') // Agelica Jacome
+	{
+		$("#TabSG").show();
+	}
+	if(profile.getEmail()!='ap2@ifixandrepair.com') // Pilar Castaño
+	{
+		$("#TabUS").show();
+	}
+
+	/******************************************************************/
+	/******************************************************************/
+
 
 	$("#loginContainer").hide();
 	$("#mainContainer").show();
