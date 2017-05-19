@@ -49,6 +49,7 @@
 			<li role="presentation" class="active"><a href="#newBox" aria-controls="home" role="tab" data-toggle="tab">New Box</a></li>
 			<li role="presentation"><a href="#sentBoxes" aria-controls="profile" role="tab" data-toggle="tab">Sent Boxes</a></li>
 		</ul>
+<<<<<<< HEAD
 		<div class="tab-content">
 			<!-- New Box Tab -->
 			<div role="tabpanel" class="tab-pane fade in active" id="newBox">				
@@ -64,20 +65,12 @@
 					</tr>
 					</thead>
 					<tbody>
-					<tr>
-						<td><button class="btn btn-danger btn-default btn-del-item"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-						<td><input type="text" class="box-name form-control"></td>
-						<td><input type="text" data-field="recycles_snt" class="quantity form-control"></td>
-						<td><input type="text" data-field="rma_snt" class="quantity form-control"></td>
-						<td><input type="text" data-field="doa_snt" class="quantity form-control"></td>
-						<td><input type="text" data-field="tecdam_snt" class="quantity form-control"></td>
-					</tr>
 					</tbody>
 					<tfoot>
 					<tr>		   
 					<td><button class="btn btn-default btn-info btn-add-item"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
 					<td colspan="4"></td>
-					<td><button class="btn btn-primary btn-default pull-right" data-toggle="modal" data-target="#close-box-modal">Close and Track</button></td>
+					<td><button class="btn btn-primary btn-default pull-right" data-toggle="modal" data-target="#close-box-modal">Track</button></td>
 					</tr>
 					</tfoot>
 					</table>
@@ -93,13 +86,63 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-							<button type="button" class="btn btn-primary" id="close-box-btn">Close and Track</button>
+							<button type="button" class="btn btn-primary" id="close-box-btn">Save and Close</button>
 						</div>
 						</div><!-- /.modal-content -->
 					</div><!-- /.modal-dialog -->
 					</div><!-- /.modal -->	
+=======
+		<div class="tab-content">			
+			<!-- New Box Tab -->			
+			<div role="tabpanel" class="tab-pane fade in active" id="newBox">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">Welcome to the RMA, DOA, Recycle and Tech Damage System!</h3>
+					</div>
+					<div class="panel-body">
+						<ul>
+						<li>Please list the exact quantities for all the screens you are going to ship.</li>
+						<li>Use the <button class="btn btn-xs btn-info"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button> button to add a new screen to the list, then start writing the name in the new box, the system will help you to complete it.</li>
+						<li>Use the <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button> button on each row in case you need to delete it.</li>
+						<li>Once you have listed all the items to ship, please use the <button class="btn btn-primary btn-xs">Save</button> button, then you can continue with the <a href="https://docs.google.com/a/ifixandrepair.com/forms/d/e/1FAIpQLSewiweSpyaHNozHPoLZfmG9W_KGRX7DEo_y1kdnZw8butw1rA/viewform"> process to request the label.</a></li>
+						</ul>
+					</div>
+				</div>
+				<table class="table table-striped" id="new-box-table" style="display:none">
+				<thead>
+				<tr>
+					<th></th>
+					<th>Screen</th>
+					<th>Recycles</th>
+					<th>RMA</th>
+					<th>DOA</th>
+					<th>Damaged by Tech.</th>
+				</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				<tfoot>
+				<tr>		   
+				<td><button class="btn btn-default btn-info btn-add-item"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></td>
+				<td colspan="4"></td>
+				<td><button class="btn btn-primary btn-default pull-right" id="close-box-btn">Save</button></td>
+				</tr>
+				</tfoot>
+				</table>					
+>>>>>>> origin/master
 			</div><!-- /New Box Tab -->
 			<div role="tabpanel" class="tab-pane fade" id="sentBoxes">
+				<div class="panel panel-success collapse">
+					<div class="panel-heading">
+						<h3 class="panel-title">Congratulations!</h3>
+					</div>
+					<div class="panel-body">
+						<ul>
+						<li>You have succesfuly saved your box.</li>						
+						<li>Now you can continue with the <a href="https://docs.google.com/a/ifixandrepair.com/forms/d/e/1FAIpQLSewiweSpyaHNozHPoLZfmG9W_KGRX7DEo_y1kdnZw8butw1rA/viewform"> process to request the label.</a></li>
+						</ul>
+					</div>
+				</div>
 				<table id="sent-boxes-table" class="table table-striped">
 					<thead>
 						<tr>
@@ -112,35 +155,18 @@
 					</tbody>
 				</table>
 			</div>
-		</div>
-		
+		</div>		
         </div>
-		<div class="sent-detail" style="display:none">
-		<table class="table table-condensed" >
-			<thead>
-				<tr>
-					<th></th>
-					<th colspan="2">Recycles.</th>
-					<th colspan="2">RMA.</th>
-					<th colspan="2">DOA.</th>
-					<th colspan="2">Damaged by Tech.</th>
-				</tr>
-				<tr>
-					<th>Screen.</th>
-					<th>Sent.</th>
-					<th>Received.</th>
-					<th>Sent.</th>
-					<th>Received.</th>
-					<th>Sent.</th>
-					<th>Received.</th>
-					<th>Sent.</th>
-					<th>Received.</th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-		</div>
+		<table class="table table-striped" id="new-box-reference-table" style="display:none">
+			<tr>
+				<td><button class="btn btn-danger btn-default btn-del-item"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+				<td><input type="text" class="box-name form-control"></td>
+				<td><input type="text" data-field="recycles_snt" class="quantity form-control"></td>
+				<td><input type="text" data-field="rma_snt" class="quantity form-control"></td>
+				<td><input type="text" data-field="doa_snt" class="quantity form-control"></td>
+				<td><input type="text" data-field="tecdam_snt" class="quantity form-control"></td>
+			</tr>
+		</table>				
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
@@ -148,5 +174,6 @@
 		<script src="https://cdn.datatables.net/t/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2/datatables.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="js/main.js?v=2"></script>
+		<script src="js/sent-boxes.js"></script>
     </body>
 </html>
