@@ -1,6 +1,9 @@
 function initSentBoxesTable(id_token, sessionType){
 <<<<<<< HEAD
+<<<<<<< HEAD
     
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
     switch(sessionType){
@@ -39,6 +42,7 @@ function initSentBoxesTable(id_token, sessionType){
                     }
                 );
 <<<<<<< HEAD
+<<<<<<< HEAD
                 if(sessionType != "store")
                     columns.push({ "data": "location" });
                 columns.push({ "data": "ship_date" });
@@ -62,6 +66,8 @@ function initSentBoxesTable(id_token, sessionType){
                         }					
                     );
 =======
+=======
+>>>>>>> origin/master
                 
                 if(sessionType != "store")
                     columns.push({ "data": "location" });
@@ -133,6 +139,9 @@ function initSentBoxesTable(id_token, sessionType){
                             row.child.show();
                         }
                     });
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
                 }
 
@@ -149,6 +158,7 @@ function initSentBoxesTable(id_token, sessionType){
                     }
                     else {
                         // Open this row
+<<<<<<< HEAD
 <<<<<<< HEAD
                         if(row.child() === undefined)
                             row.child( formatDetailRow(row.data()) );
@@ -204,6 +214,8 @@ function initSentBoxesTable(id_token, sessionType){
                             // End - Box Detail - Add Item.
                         }// End - Admin Tools
 =======
+=======
+>>>>>>> origin/master
                         if(row.child() === undefined){
                             row.child( formatDetailRow(row.data()) );
                             //Admin tools
@@ -263,6 +275,9 @@ function initSentBoxesTable(id_token, sessionType){
                         $(this).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
                        
                         
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
                         
                         // Qty Inputs Behavior
@@ -310,9 +325,12 @@ function initSentBoxesTable(id_token, sessionType){
                         }// End - Qty Inputs Behavior.
                     }
 <<<<<<< HEAD
+<<<<<<< HEAD
                 });// End - Detail Row Behavior.
                 
 =======
+=======
+>>>>>>> origin/master
                 });// End - Detail Row Behavior.                
 
                 $(".track_num_input").on("keypress change", function(e){
@@ -337,6 +355,9 @@ function initSentBoxesTable(id_token, sessionType){
                     }
                  });
 
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
                 // Detail Row Format.
                 var detailRowCells = [
@@ -373,7 +394,10 @@ function initSentBoxesTable(id_token, sessionType){
                 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/master
                 function openBoxDetail ( d ) {
                     var detailTable = $("<table></table>");
                     detailTable.append("<thead><th>Box Name</th><th>Recycles</th><th>RMA</th><th>DOA</th><th>Tech Damage</th></thead>");
@@ -391,6 +415,9 @@ function initSentBoxesTable(id_token, sessionType){
                     return detailTable.html();
                 }
 
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
                 function addDetailRow(boxItem, detailTable){
                     var detailRow = $("<tr data-box-id=\"" + boxItem.box_id + "\"></tr>");
@@ -500,10 +527,13 @@ function initSentBoxesTable(id_token, sessionType){
                         }).length;
                     if(difs == 1)
 <<<<<<< HEAD
+<<<<<<< HEAD
                         trItem.css("background-color", "lightgoldenrodyellow");
                     else if(difs >= 2)
                         trItem.css("background-color", "lightcoral");
 =======
+=======
+>>>>>>> origin/master
                         $("td:nth-child(2)", trItem).nextUntil("td:nth-child(8)", trItem).css("background-color", "lightgoldenrodyellow");
                     else if(difs >= 2)
                         $("td:nth-child(2)", trItem).nextUntil("td:nth-child(8)", trItem).css("background-color", "lightcoral");
@@ -515,6 +545,9 @@ function initSentBoxesTable(id_token, sessionType){
                     $("input", context).filter(function(){return $(this).val() === "0"}).css("color", "lightgray");
                     $("td", context).filter(function(){return $(this).text() != "0"}).css("color", "inherit");
                     $("input", context).filter(function(){return $(this).val() != "0"}).css("color", "inherit");
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
                 }
             });
@@ -524,6 +557,10 @@ function initSentBoxesTable(id_token, sessionType){
     );
     //-- End - Load Boxes.
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 =======
 
 >>>>>>> origin/master

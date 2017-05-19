@@ -300,5 +300,8 @@ class CustomFilter implements PHPExcel_Reader_IReadFilter
         return false; 
     } 
 }
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 ?>

@@ -17,7 +17,11 @@ function onSignIn(googleUser) {
 		var inputTrigger = $(this);
 		var parentUl = inputTrigger.closest("ul");
 <<<<<<< HEAD
+<<<<<<< HEAD
 		parentUl.append("<li><p class=\"navbar-text blinkerText\">Loading...</p><li>");
+=======
+		parentUl.append("<li>Loading...<li>");
+>>>>>>> origin/master
 =======
 		parentUl.append("<li>Loading...<li>");
 >>>>>>> origin/master
@@ -41,14 +45,20 @@ function onSignIn(googleUser) {
 	});
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	initSentBoxesTable(id_token, "admin");
 =======
+=======
+>>>>>>> origin/master
 	// Sent Boxes	
 	initSentBoxesTable(id_token, "admin");
 	$('a[href="#sentBoxes"]').on('shown.bs.tab', function (e) {
 		initSentBoxesTable(id_token, "admin");
 	});
 	//$('a[href="#sentBoxes"]').tab('show');
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 }
 

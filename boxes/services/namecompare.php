@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <?php
 require_once "config.php";
 require_once "DataBase.php";
@@ -46,6 +47,8 @@ class nameCompare{
 
 nameCompare::compare();
 =======
+=======
+>>>>>>> origin/master
 <?php
 require_once "config.php";
 require_once "DataBase.php";
@@ -92,5 +95,8 @@ class nameCompare{
 }
 
 nameCompare::compare();
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 ?>

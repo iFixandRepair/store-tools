@@ -23,6 +23,10 @@ class StoreBox{
             FROM `store_boxes`
             WHERE ship_date > FROM_UNIXTIME(?)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            AND tracking_number IS NOT NULL
+>>>>>>> origin/master
 =======
             AND tracking_number IS NOT NULL
 >>>>>>> origin/master

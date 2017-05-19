@@ -20,11 +20,14 @@ class RQProductDetail{
 
     const SQL_SEL_EXPECTED_BY_LAPSE = 
 <<<<<<< HEAD
+<<<<<<< HEAD
         "SELECT box_name, SUM(quantity) as expected FROM `rq_product_detail`
         WHERE store_id = ?
         AND invoice_date BETWEEN FROM_UNIXTIME(?) AND FROM_UNIXTIME(?)
         AND quantity > 0
 =======
+=======
+>>>>>>> origin/master
         "SELECT box_name, SUM(quantity) as expected FROM (
             SELECT invoice_id, box_name, SUM(quantity) as quantity 
             FROM `rq_product_detail`
@@ -32,6 +35,9 @@ class RQProductDetail{
             AND invoice_date BETWEEN FROM_UNIXTIME(?) AND FROM_UNIXTIME(?)
             GROUP BY invoice_id, box_name
             ) q
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
         GROUP BY box_name";
     

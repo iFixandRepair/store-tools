@@ -178,6 +178,7 @@
 					<div id="messages-us" name="messages-us" class="messages-us"></div>			
 					<form  method="post" enctype="multipart/form-data" class="form-inline  navbar navbar-default formulario-us">
 <<<<<<< HEAD
+<<<<<<< HEAD
 						<div class="form-group">							
 							<div class="row">
 								<div class="col-md-4">
@@ -186,6 +187,8 @@
 								<div class="col-md-8">
 									<input type="file" class="form-control" name="LocationSales" id="LocationSales">
 =======
+=======
+>>>>>>> origin/master
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-4">
@@ -204,11 +207,15 @@
 								</div>
 								<div class="col-md-8">
 									<input type="file" class="form-control" name="salesReport" id="salesReport">
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-4">
+<<<<<<< HEAD
 <<<<<<< HEAD
 									<label for="EmployeeSales">Sales by Employee/label>
 								</div>
@@ -217,6 +224,8 @@
 								</div>
 							</div>							
 =======
+=======
+>>>>>>> origin/master
 									<label for="accesoriesReport">Accesories File</label>
 								</div>
 								<div class="col-md-8">
@@ -239,6 +248,9 @@
 									<input type="file" class="form-control" name="AutoPunchOut" id="AutoPunchOut">
 								</div>
 							</div>
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 							<div class="row">
 								<div class="col-md-12">

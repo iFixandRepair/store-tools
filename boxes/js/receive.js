@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 function onSignIn(googleUser) {
 	var id_token = googleUser.getAuthResponse().id_token;
 	var profile = googleUser.getBasicProfile();
@@ -17,6 +18,8 @@ function signOut() {
     });
 	
 =======
+=======
+>>>>>>> origin/master
 function onSignIn(googleUser) {
 	var id_token = googleUser.getAuthResponse().id_token;
 	var profile = googleUser.getBasicProfile();
@@ -34,5 +37,8 @@ function signOut() {
 		$("#loginContainer").show();
     });
 	
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
 }
