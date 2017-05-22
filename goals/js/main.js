@@ -95,8 +95,7 @@ function onSignIn(googleUser) {
 		function(){ 
 	        var texto 	= $('#txtSearch').val();
 			alert(texto)
-		  	findString (texto);
-	    	   	
+		  	findString (texto);	    	   	
 	});
 
 	$("#btn-upload").click(
@@ -122,27 +121,67 @@ function onSignIn(googleUser) {
             },
             //una vez finalizado correctamente
             success: function(data){  
-
-                message = "Uploading Files, Please Wait...";
-                showMessage(message,'info')             	
+                        	
             	data = JSON.parse(data);
                 message = "<span class='error'>An error has occurred, Please Try Again.</span>";
+            	tipoMsg = "danger";
             	if (typeof data.success !== 'undefined') 
             	{				  
-            		message = "<span class='error'>An error has occurred, Please Try Again.</span>";
-            		tipoMsg = "danger";
                 	if (data.success==1) 
-	            	{				  
-	                	message = "Files uploaded successfully.";
-            			tipoMsg = "success";
+	            	{	
+	            		var message1 = 0;
+	            		var message2 = 0;
+	            		data = data.data;
+	            		print_r(data);
+	            		if (typeof data.LocationSales !== 'undefined') 
+            			{
+
+            				if (data.LocationSales==1) 
+	            			{
+            					tipoMsg 	= "success";
+	            			}
+	            			else
+	            			{
+	            				message1 	= "Error Processing, Check that the data does not exist in the system";
+	            			}
+            			}	
+            			if (typeof data.EmployeeSales !== 'undefined') 
+            			{
+            				if (data.EmployeeSales==1) 
+	            			{
+            					tipoMsg 	= "success";
+	            			}
+	            			else
+	            			{
+	            				message2 	= "Error Processing, Check that the data does not exist in the system";
+	            			}
+            			}
+            			if(message1==0 && message2==0 )	
+            			{
+            				message = "Files uploaded successfully";
+            			}
+            			else 
+            			{
+            				message = "Files uploaded, Some of the files had problems:<br>";
+            				if(message1!=0)
+            				{
+            					message+='<br><b>Sales by Location:</b> '+message1;
+            				}
+            				if(message2!=0)
+            				{
+            					message+='<br><b>Sales by Employee:</b> '+message2;
+            				}
+            			}		
 					}
                 	else
 	            	{				  
-	                	message = "Error Uploading, Please Try Again";
-            			tipoMsg = "success";
+	                	message = "Error Uploading, Please Make sure the files are correct, and are not in the system";
+            			tipoMsg = "danger";
 					}
 				}
-                showMessage(message, tipoMsg);
+				showMessage(message, tipoMsg);
+				
+                
             },
             //si ha ocurrido un error
             error: function(){
@@ -205,21 +244,15 @@ function onSignIn(googleUser) {
 	$("#btn-generateReport").click(
 		function(){ 
 		//información del formulario
-        var date_ini 	= $('#Init_date').val()
-		var date_end 	= $('#End_date').val()		
-		var typeRep		= $('input[name="typeRep"]:checked').val();
-        var message 	= ""; 
+        var date 	= $('#date').val()	
+		var typeRep	= $('input[name="typeRep"]:checked').val();
+        var message = ""; 
         
-        if (typeof date_ini == 'undefined' || date_ini =='') 
+        if (typeof date == 'undefined' || date =='') 
         {
-        	message = 'Please Fill the Init Date';
+        	message = 'Please Fill the Date';
         	showMessage(message,'warning');
-        }
-        else if (typeof date_end == 'undefined' || date_end =='') 
-        {
-        	message = 'Please Fill the End Date';
-        	showMessage(message,'warning');
-        }
+        }        
         else if (typeof typeRep == 'undefined' || typeRep =='') 
         {
         	message = 'Please Select a type of report';
@@ -227,185 +260,8 @@ function onSignIn(googleUser) {
         }
         else
 	    {
-	    	if (tableVR != '') 
-			{
-        		tableVR.destroy();
-			}
-			GenerarReporteVR (date_ini,date_end,typeRep)
-	        //hacemos la petición ajax  
-	        /*$.ajax({
-	            url			: 'services/operations-vr.php',  
-	            type 		: 'POST',
-	            // Form data
-	            //datos del formulario           
-	            data 		: 
-	            {
-					opt 		: 'get' 
-					,date_ini 	: date_ini
-					,date_end 	: date_end
-					,typeRep 	: typeRep
-	            },
-	            //mientras enviamos el archivo
-	            beforeSend 	: function(){
-	                message = "Generating Report, Please Wait...";
-	                showMessage(message,'info')        
-	            },
-	            //una vez finalizado correctamente
-	            success: function(data){
-	            	data = JSON.parse(data);
-	            	if (typeof data.data !== 'undefined') 
-	            	{				  
-	                	if (data.data!='') 
-		            	{	
-		            		if(typeRep==1)
-		            		{
-		            			descTypeRep = 'Daily';
-		            		}	
-		            		if(typeRep==2)
-		            		{
-		            			descTypeRep = 'Weekly';
-		            		}	
-		            		if(typeRep==3)
-		            		{
-		            			descTypeRep = 'Monthly';
-		            		}		  
-		                	tableVR = $('#view-report-table').DataTable( 
-			            	{
-			            		aLengthMenu		: [[25, 50, 75, -1], [25, 50, 75, "All"]],
-	        					iDisplayLength	: 25,
-						        data 			: data.data,
-						        columns 		: 
-						        [	
-						            { "data": "Date" 						},
-						            { "data": "Store" 						},
-						            { "data": "Manager" 					},
-						            { "data": "Salary" 						},
-						            { "data": "Sales" 						},
-						            { "data": "Accesories" 					},
-						            { "data": "GrossProfit" 				},
-						            { "data": "Hours" 						},
-						            { "data": "Budget" 						},
-						            { "data": "Budget_plus/minus" 			},
-						            { "data": "OT" 							},
-						            { "data": "MGR_req_hrs" 				},
-						            { "data": "MGR_HRS" 					},
-						            { "data": "MGR_hrs_plus/minus"			},
-						            { "data": "Message",  "bVisible": false	},
-						            {
-										"className"		: 'Edit-comments',
-										"orderable"		: false,
-										"data"			: null,
-										"defaultContent": '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>'
-									}						           
-						        ],
-						        dom: 'Bfrtip',
-						        buttons: [
-						            {
-						                extend: 'excelHtml5',
-						                title: 'Sales Report '+descTypeRep+' '+date_ini.replace("/", "-")+ ' To '+date_end.replace("/", "-")
-						            },
-						            {
-						                extend: 'pdfHtml5',
-						                title: 'Sales Report '+descTypeRep+' '+date_ini.replace("/", "-")+ ' To '+date_end.replace("/", "-")
-						            }
-						        ]
-						    } );
-						    message = "Sales Report Loaded Successfully.";
-            				tipoMsg = "success";
-
-            				$('#view-report-table .Edit-comments').on('click', function(){
-				        	//print_r(tableSG.row(this).data());
-					        var arrRow = tableVR.row(this).data();
-					        //alert( 'You clicked on '+arrRow['Store']+'\'s row' );
-						    $('#AddStoreComment #MDLVR_Store').val(arrRow['Store']);
-						    $('#AddStoreComment #NameStoreComment').html(arrRow['Store']);
-						    if(arrRow['Message']!="")
-						    {
-						    	$('#AddStoreComment #MDLVR_Message').val(arrRow['Message']);
-						    }
-						    $('#AddStoreComment').modal('show');
-
-						    $("#btn-save_MDLVR").click(
-							function()
-							{ 
-								var store 		= arrRow['Store'];
-								var messages 	= $('#AddStoreComment #MDLVR_Message').val();
-								var month		= arrRow['MONTH'];
-								var year		= arrRow['YEAR'];
-								
-						        $.ajax({
-						            url			: 'services/operations-vr.php',  
-						            type 		: 'POST',
-						            // Form data
-						            //datos del formulario
-						            data 		: 
-						            {
-										opt 	: 'saveComment' 
-										,store 	: store
-										,message: message
-										,month  : month
-										,year   : year
-						            },
-						            //mientras enviamos el archivo
-						           beforeSend 	: function(){
-						                message = "Saving, Please Wait...";
-						                showMessage(message,'info')        
-						            },
-						            //una vez finalizado correctamente
-						            success: function(data)
-						            {
-						            	data 	= JSON.parse(data);
-						            	message = "An error has occurred, Please Try Again.";
-										tipoMsg = "danger";
-						            	if (typeof data.success !== 'undefined') 
-						            	{	
-						                	if (data.success==1) 
-							            	{				  
-							                	message = "File saved successfully.";
-												tipoMsg = "success";
-							                	$('#AddStoreComment').modal('hide');
-												//$( "#btn-save_MDLVR").off();							                	
-												//$( "#view-report-table .Edit-comments").off();
-												tableVR.reload();
-											}
-											else
-											{
-												message = "An error saving has occurred, Please Try Again.";
-												tipoMsg = "danger";
-											}
-										}		
-										showMessage(message,tipoMsg);				                
-						            },
-						            //si ha ocurrido un error
-						            error: function(){
-						                message = "An error has occurred, Please Try Again.";
-						                showMessage(message,'danger');
-						            }
-						        }); 							           
-							});
-					    } ); 
-
-						}
-						else
-						{
-							$('#view-report-table').hide();
-							message = "No data available in selected dates";
-							tipoMsg = "info";
-						}
-					}
-					else
-					{
-						message = "An error has occurred, Please Try Again.";
-						tipoMsg = "danger";
-					}
-					showMessage(message,tipoMsg);
-	            },
-	            //si ha ocurrido un error
-	            error: function(){
-	                message = "An error has occurred, Please Try Again.";
-	                showMessage(message,'danger');
-	            }
-	        }); */       
+			GenerarReporteVR (date,typeRep)
+	             
 	   	}
 	});
 
@@ -469,8 +325,9 @@ function onSignIn(googleUser) {
 		});
 	}
 
-	function GenerarReporteVR (date_ini,date_end,typeRep)
+	function GenerarReporteVR (date,typeRep)
 	{
+		$("#GOAL_stores").html('');
 		$.ajax({
 	        url			: 'services/operations-vr.php',  
 	        type 		: 'POST',
@@ -479,8 +336,7 @@ function onSignIn(googleUser) {
 	        data 		: 
 	        {
 				opt 		: 'get' 
-				,date_ini 	: date_ini
-				,date_end 	: date_end
+				,date 		: date
 				,typeRep 	: typeRep
 	        },
 	        //mientras enviamos el archivo
@@ -494,147 +350,95 @@ function onSignIn(googleUser) {
 	        	if (typeof data.data !== 'undefined') 
 	        	{				  
 	            	if (data.data!='') 
-	            	{	
+	            	{
+	            		/*employee_id: 684
+						employee_name: Cassandra Craven
+						EMPL_GOAL_GP: 1000
+						EMPL_ACTUAL_GP: 779
+						EMPL_LAST_DATE: 2017-05-15
+						EMPL_TREND: 160.9933
+						EMPL_NEEDED: 32.2581
+						store_id: 19
+						store_name: Wiregrass - 19
+
+						STOR_GOAL_GP: 1000
+						STOR_ACTUAL_GP: 1608
+						STOR_LAST_DATE: 2017-05-15
+						STOR_TREND: 332.3200
+						STOR_NEEDED: 32.2581*/
+	            		data = data.data;	
 	            		if(typeRep==1)
 	            		{
-	            			descTypeRep = 'Daily';
+	            			descTypeRep = 'Stores - Employees';
+	            			var colorEncabezados = '#c0c0c0';						
+		            		for (i = 0; i < data.length; ++i) 
+		            		{
+		            			registro = data[i];
+		            			//print_r(registro);
+		            			name_UL = registro.store_id;
+		            			if ( $("#"+name_UL).length > 0 ) 
+		            			{
+									// hacer algo aquí si el elemento existe
+									$("#"+name_UL).append('<li id="'+registro.employee_id+'" style="padding:5px"><div class="col-md-2">'+registro.employee_name+'</div><div class="col-md-2">'+registro.EMPL_LAST_DATE+'</div><div class="col-md-2">'+registro.EMPL_GOAL_GP+'</div><div class="col-md-2">'+registro.EMPL_ACTUAL_GP+'</div><div class="col-md-2">'+Math.round(registro.EMPL_TREND)+' %</div><div class="col-md-2">'+Math.round(registro.EMPL_NEEDED)+'</div></li>')
+								}
+								else
+								{
+									$("#GOAL_stores").append('<div class="col-md-12" style="background-color:'+colorEncabezados+'"><div class="col-md-2">Store Name</div><div class="col-md-2">Last Date Available</div><div class="col-md-2">Store Goal GP</div><div class="col-md-2">Actual GP</div><div class="col-md-2">Trend to Goal</div><div class="col-md-2">Needed Per Day</div></div>');
+									$("#GOAL_stores").append('<div class="col-md-12"><div class="col-md-2">'+registro.store_name+'</div><div class="col-md-2">'+registro.STOR_LAST_DATE+'</div><div class="col-md-2">'+registro.STOR_GOAL_GP+'</div><div class="col-md-2">'+registro.STOR_ACTUAL_GP+'</div><div class="col-md-2">'+Math.round(registro.STOR_TREND)+' %</div><div class="col-md-2">'+Math.round(registro.STOR_NEEDED)+'</div>');
+									$("#GOAL_stores").append('<div class="col-md-12"><ul id="'+name_UL+'" class="sortableVR connectedSortableVR col-md-12" style="list-style-type: none;"><li style="padding:5px;"><div style="background-color:'+colorEncabezados+'" class="col-md-2">Employee Name</div><div style="background-color:'+colorEncabezados+'" class="col-md-2">Last Date Available</div><div style="background-color:'+colorEncabezados+'" class="col-md-2">Employee Goal GP</div><div style="background-color:'+colorEncabezados+'" class="col-md-2">Actual GP</div><div style="background-color:'+colorEncabezados+'" class="col-md-2">Trend to Goal</div><div style="background-color:'+colorEncabezados+'" class="col-md-2">Needed Per Day</div></li></ul></div>');
+									//$("#GOAL_stores").append('<div class="col-md-12"><table><tr><td>Store Name</td><td>Store Goal GP</td><td>Last Date Available</td><td>Trend to Goal</td><td>Needed Per DAy</td></tr><tr><td>'+registro.store_name+'</td><td>'+registro.STOR_GOAL_GP+'</td><td>'+registro.STOR_LAST_DATE+'</td><td>'+registro.STOR_TREND+' %</td><td>'+registro.STOR_NEEDED+'</td></tr><td colspan="5"><ul id="'+name_UL+'" class="sortableVR connectedSortableVR col-md-12"></ul></td></tr></table></div>');
+								}
+							}
 	            		}	
 	            		if(typeRep==2)
 	            		{
-	            			descTypeRep = 'Weekly';
+	            			descTypeRep = 'Stores';
+	            			var colorEncabezados = '#c0c0c0';	
+	            			$("#GOAL_stores").append('<div class="col-md-12" style="background-color:'+colorEncabezados+'"><div class="col-md-2">Store Name</div><div class="col-md-2">Last Date Available</div><div class="col-md-2">Store Goal GP</div><div class="col-md-2">Actual GP</div><div class="col-md-2">Trend to Goal</div><div class="col-md-2">Needed Per Day</div></div>');
+													
+		            		for (i = 0; i < data.length; ++i) 
+		            		{
+		            			registro = data[i];
+		            			name_UL = registro.store_id;
+		            			if ( $("#"+name_UL).length == 0 ) 
+		            			{
+									$("#GOAL_stores").append('<div id="'+registro.store_id+'" class="col-md-12"><div class="col-md-2">'+registro.store_name+'</div><div class="col-md-2">'+registro.STOR_LAST_DATE+'</div><div class="col-md-2">'+registro.STOR_GOAL_GP+'</div><div class="col-md-2">'+registro.STOR_ACTUAL_GP+'</div><div class="col-md-2">'+Math.round(registro.STOR_TREND)+' %</div><div class="col-md-2">'+Math.round(registro.STOR_NEEDED)+'</div>');
+								}
+							}
 	            		}	
 	            		if(typeRep==3)
 	            		{
-	            			descTypeRep = 'Monthly';
-	            		}		  
-	                	tableVR = $('#view-report-table').DataTable( 
-		            	{
-		            		aLengthMenu		: [[25, 50, 75, -1], [25, 50, 75, "All"]],
-	    					iDisplayLength	: 25,
-					        data 			: data.data,
-					        columns 		: 
-					        [	
-					            { "data": "Date" 						},
-					            { "data": "Store" 						},
-					            { "data": "Manager" 					},
-					            { "data": "Salary" 						},
-					            { "data": "Sales" 						},
-					            { "data": "Accesories" 					},
-					            { "data": "GrossProfit" 				},
-					            { "data": "Hours" 						},
-					            { "data": "Budget" 						},
-					            { "data": "Budget_plus/minus" 			},
-					            { "data": "OT" 							},
-					            { "data": "MGR_req_hrs" 				},
-					            { "data": "MGR_HRS" 					},
-					            { "data": "MGR_hrs_plus/minus"			},
-					            { "data": "Message",  "bVisible": false	},
-					            {
-									"className"		: 'Edit-comments',
-									"orderable"		: false,
-									"data"			: null,
-									"defaultContent": '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>'
-								}						           
-					        ],
-					        dom: 'Bfrtip',
-					        buttons: [
-					            {
-					                extend: 'excelHtml5',
-					                title: 'Sales Report '+descTypeRep+' '+date_ini.replace("/", "-")+ ' To '+date_end.replace("/", "-")
-					            },
-					            {
-					                extend: 'pdfHtml5',
-					                title: 'Sales Report '+descTypeRep+' '+date_ini.replace("/", "-")+ ' To '+date_end.replace("/", "-")
-					            }
-					        ]
-					    } );
-					    message = "Sales Report Loaded Successfully.";
-	    				tipoMsg = "success";
+	            			descTypeRep = 'Employees';
+	            			var colorEncabezados = '#c0c0c0';	
+	            			$("#GOAL_stores").append('<div class="col-md-12" style="background-color:'+colorEncabezados+'"><div class="col-md-2">Employee Name</div><div class="col-md-2">Last Date Available</div><div class="col-md-2">Store Goal GP</div><div class="col-md-2">Actual GP</div><div class="col-md-2">Trend to Goal</div><div class="col-md-2">Needed Per Day</div></div>');
+													
+		            		for (i = 0; i < data.length; ++i) 
+		            		{
+		            			registro = data[i];
+		            			name_UL = registro.employee_id;
+		            			if ( $("#"+name_UL).length == 0 ) 
+		            			{
+									$("#GOAL_stores").append('<div id="'+registro.employee_id+'" class="col-md-12"><div class="col-md-2">'+registro.employee_name+'</div><div class="col-md-2">'+registro.EMPL_LAST_DATE+'</div><div class="col-md-2">'+registro.EMPL_GOAL_GP+'</div><div class="col-md-2">'+registro.EMPL_ACTUAL_GP+'</div><div class="col-md-2">'+Math.round(registro.EMPL_TREND)+' %</div><div class="col-md-2">'+Math.round(registro.EMPL_NEEDED)+'</div></div>');
+								}
+							}
+	            		}	
+	            		message = "Store Goals Loaded Successfully.";
+	            		tipoMsg = "success";
 
-	    				$('#view-report-table .Edit-comments').on('click', function(){
-			        	//print_r(tableSG.row(this).data());
-				        var arrRow = tableVR.row(this).data();
-				        //alert( 'You clicked on '+arrRow['Store']+'\'s row' );
-					    $('#AddStoreComment #MDLVR_Store').val(arrRow['Store']);
-					    $('#AddStoreComment #NameStoreComment').html(arrRow['Store']);
-					    if(arrRow['Message']!="")
-					    {
-					    	$('#AddStoreComment #MDLVR_Message').val(arrRow['Message']);
-					    }
-					    $('#AddStoreComment').modal('show');
-					    $('#AddStoreComment').on('hidden.bs.modal', function () {
-						    //alert('se cerro')
-						    $( "#btn-save_MDLVR").off();	
-						    //$( "#view-report-table .Edit-comments").off();
-						})
 
-					    $("#btn-save_MDLVR").click(
-						function()
-						{ 
-							var store 		= arrRow['Store'];
-							var comment 	= $('#AddStoreComment #MDLVR_Message').val();
-							var month		= arrRow['MONTH'];
-							var year		= arrRow['YEAR'];
-							
-					        $.ajax({
-					            url			: 'services/operations-vr.php',  
-					            type 		: 'POST',
-					            // Form data
-					            //datos del formulario
-					            data 		: 
-					            {
-									opt 	: 'saveComment' 
-									,store 	: store
-									,message: comment
-									,month  : month
-									,year   : year
-					            },
-					            //mientras enviamos el archivo
-					           beforeSend 	: function(){
-					                message = "Saving, Please Wait...";
-					                showMessage(message,'info')        
-					            },
-					            //una vez finalizado correctamente
-					            success: function(data)
-					            {
-					            	data 	= JSON.parse(data);
-					            	message = "An error has occurred, Please Try Again.";
-									tipoMsg = "danger";
-					            	if (typeof data.success !== 'undefined') 
-					            	{	
-					                	if (data.success==1) 
-						            	{				  
-						                	message = "File saved successfully.";
-											tipoMsg = "success";
-						                	$('#AddStoreComment').modal('hide');
-											$( "#btn-save_MDLVR").off();							                	
-											$( "#view-report-table .Edit-comments").off();
-											tableVR.destroy();
-											GenerarReporteVR (date_ini,date_end,typeRep);
-										}
-										else
-										{
-											message = "An error saving has occurred, Please Try Again.";
-											tipoMsg = "danger";
-										}
-									}		
-									showMessage(message,tipoMsg);				                
-					            },
-					            //si ha ocurrido un error
-					            error: function(){
-					                message = "An error has occurred, Please Try Again.";
-					                showMessage(message,'danger');
-					            }
-					        }); 							           
-						});
-				    } ); 
-
+						/*$( function() {
+						    $( ".sortableVR" ).sortable({
+						      connectWith: ".connectedSortableVR"
+						    }).disableSelection();
+					  	} );*/
+	            		
 					}
 					else
 					{
-						$('#view-report-table').hide();
-						message = "No data available in selected dates";
-						tipoMsg = "info";
+						message = "Please upload Store Goals...";
+	            		tipoMsg = "danger";
+						$('#store-goals-table').hide();
+						$('.formulario-sg').show();
 					}
 				}
 				else

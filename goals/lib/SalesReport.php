@@ -11,24 +11,23 @@ class SalesReport{
 
     /*************************************************************************************/
     /*************************************************************************************/
-    /*** function:    getSalesReport                                                   ***/
-    /*** Description: Funcion que se encarga de traer los datos del reporte de ventas  ***/
-    /*** In Params:   $date_ini:    Fecha inicial del reporte                          ***/
-    /***              $date_end:    Fecha final del reporte                            ***/
-    /***              $typeRep:     Tipo del reporte 1.Diario 2.Semanal 3.Mensual      ***/
+    /*** function:    getGoalsReport                                                   ***/
+    /*** Description: Funcion que se encarga de traer los datos del reporte Goals      ***/
+    /*** In Params:   $date_ini:    Fecha del reporte                                  ***/
+    /***              $typeRep:     Tipo del reporte 1.Stores - Employees 2.Stores     ***/
+    /***                            3.Employees                                        ***/
     /*** Return:      Arreglo de las ventas                                            ***/ 
     /*************************************************************************************/
     /*************************************************************************************/
-    public function getSalesReport($date_ini,$date_end,$typeRep ){
-        $date_ini = date('Y-m-d',strtotime($date_ini));
-        $date_end = date('Y-m-d',strtotime($date_end));
+    public function getGoalsReport($date,$typeRep){
+        $date = date('Y-m-d',strtotime($date));
         $dbh = DataBase::getDbh();
         try 
         {
-            $query = $this->PrepareSQLQuery($typeRep);
-           // echo $query;
+            $query = $this->PrepareSQLQuery($date,$typeRep);
+            //echo $query;
             $selSth = $dbh->prepare($query); 
-            $selSth->execute(array($date_ini, $date_end));         
+            $selSth->execute(array());         
             $arr = $selSth->fetchAll(PDO::FETCH_CLASS);    
             return $arr;
 
@@ -42,157 +41,77 @@ class SalesReport{
     /*************************************************************************************/
     /*** function:    PrepareSQLQuery                                                  ***/
     /*** Description: Funcion que se encarga retornar la consulta para el reporte      ***/
-    /*** In Params:   $typeRep:     Tipo del reporte 1.Diario 2.Semanal 3.Mensual      ***/
+    /*** In Params:   $date_ini:    Fecha del reporte                                  ***/
+    /***              $typeRep:     Tipo del reporte 1.Stores - Employees 2.Stores     ***/
+    /***                            3.Employees                                        ***/
     /*** Return:      String (query)                                                   ***/ 
     /*************************************************************************************/
     /*************************************************************************************/
-    private function PrepareSQLQuery($typeRep)
+    private function PrepareSQLQuery($date,$typeRep)
     {
-        ## Campos que se van a usar en cada consulta 
-        $SQL_SEL_CAMPOS_REP = " 
-            ,s.Store
-            ,sg.Manager
-            ,ROUND(SUM(s.Sales),2)                      AS 'Sales'
-            ,sg.Salary                                  AS 'Salary'
-            ,ROUND(SUM(s.Accesories),2)                 AS 'Accesories'
-            ,ROUND(SUM(s.GrossProfit),2)                AS 'GrossProfit'
-            ,ROUND(SUM(s.Hours),2)                      AS 'Hours'
-            ,ROUND(SUM(s.OT),2)                         AS 'OT'    
-            -- ,sg.Hrs_mgr                              AS 'MGR_req_hrs'
-            ,ROUND(SUM(sp.RegularTime),2)               AS 'MGR_HRS'
-            ,MONTH(s.date_sale)                         AS 'MONTH' 
-            ,YEAR(s.date_sale)                          AS 'YEAR'
-            ,sc.message                                 AS 'Message'  ";
-
-        if($typeRep==1)
-        {
-            ## Consulta en caso de que se desee Diaria
-            $query = " 
-                SELECT
-                    s.date_sale                                         AS 'Date' 
-                    ,ROUND((sg.Hours / 7),0)                            AS 'Budget'
-                    ,ROUND(SUM(s.Hours) - (sg.Hours / 7),2)             AS 'Budget_plus/minus'
-                    ,ROUND((sg.Hrs_mgr / 7),2)                          AS 'MGR_req_hrs' 
-                    ,ROUND((sg.Hrs_mgr / 7) - SUM(IFNULL(sp.RegularTime,0)),2)    AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
+        $query = " 
+               SELECT 
+                    eg.employee_id
+                    ,ege.name                   employee_name
+                    ,eg.goal                    EMPL_GOAL_GP           
+                    ,ACGP.gp                    EMPL_ACTUAL_GP
+                    ,ACGP.date                  EMPL_LAST_DATE
+                    ,(ACGP.gp/(DAY(ACGP.date)*(eg.goal / DAY(LAST_DAY(ACGP.date) ))))*100 as EMPL_TREND
+                    ,CASE 
+                        WHEN (eg.goal / DAY(LAST_DAY(ACGP.date))) > ((eg.goal - ACGP.gp) / (DAY(LAST_DAY(ACGP.date))-DAY(ACGP.date))) THEN  (eg.goal / DAY(LAST_DAY(ACGP.date))) 
+                        ELSE ((eg.goal - ACGP.gp) / (DAY(LAST_DAY(ACGP.date))-DAY(ACGP.date)))  
+                    END EMPL_NEEDED                    
+                    ,eg.store_id
+                    ,egs.rq_name        store_name
+                    ,sg.goal            STOR_GOAL_GP       
+                    ,ACGPSG.gp          STOR_ACTUAL_GP
+                    ,ACGPSG.date        STOR_LAST_DATE
+                    ,(ACGPSG.gp/(DAY(ACGPSG.date)*(eg.goal / DAY(LAST_DAY(ACGPSG.date) ))))*100 as STOR_TREND
+                    ,CASE 
+                        WHEN (eg.goal / DAY(LAST_DAY(ACGPSG.date))) > ((eg.goal - ACGPSG.gp) / (DAY(LAST_DAY(ACGPSG.date))-DAY(ACGPSG.date))) THEN  (eg.goal / DAY(LAST_DAY(ACGPSG.date))) 
+                        ELSE ((eg.goal - ACGP.gp) / (DAY(LAST_DAY(ACGPSG.date))-DAY(ACGPSG.date)))  
+                    END STOR_NEEDED
                 FROM 
-                    sales s
-                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store and sg.Month = MONTH(s.date_sale)  and sg.Year = YEAR(s.date_sale) 
-                    INNER JOIN sales_payroll sp ON s.Store = sp.Store AND s.date_sale = sp.date_sale AND sg.Manager = sp.Employee
-                    LEFT JOIN sales_comments sc ON sc.store = s.Store AND sc.month = MONTH(s.date_sale) AND sc.year = YEAR(s.date_sale)  
-                WHERE
-                    s.date_sale BETWEEN  ?  AND   ? 
-                GROUP BY
-                    s.date_sale
-                    ,s.Store
-                    ,sg.Manager";
+                    store_goals sg 
+                    LEFT JOIN employees_goals eg ON eg.store_id = sg.store_id
+                    INNER JOIN employees ege ON eg.employee_id = ege.employee_id
+                    INNER JOIN rq_stores egs ON eg.store_id = egs.rq_store_id
+                    LEFT JOIN ( SELECT 
+                                    store_id
+                                    ,MAX(date) date
+                                    ,MAX(profit) gp
+                                FROM store_profit
+                                WHERE 
+                                    date BETWEEN '01-'+MONTH('".$date."')+'-'+YEAR('".$date."') AND '".$date."'
+                                GROUP BY 
+                                    store_id
+                            ) as ACGPSG ON sg.store_id = ACGPSG.store_id
+                    LEFT JOIN ( SELECT 
+                                    employee_id
+                                    ,MAX(date) date
+                                    ,MAX(profit) gp
+                                FROM employee_profit
+                                WHERE 
+                                    date BETWEEN '01-'+MONTH('".$date."')+'-'+YEAR('".$date."') AND '".$date."' 
+                                GROUP BY 
+                                    employee_id
+                            ) as ACGP ON eg.employee_id = ACGP.employee_id";
+        if($typeRep==1 || $typeRep==2)
+        { 
+            ## Consulta en caso de que se Stores - Employees
+            $query.= " ORDER BY 
+                    egs.rq_name ASC";
         }
-        if($typeRep==2)
+        else
         {
-            ## Consulta en caso de que se desee Semanal
-            $query = " 
-                SELECT
-                    WEEK(s.date_sale,1)                           AS 'Date' 
-                    ,sg.Hours                                   AS 'Budget'
-                    ,ROUND(SUM(s.Hours) - sg.Hours ,2)          AS 'Budget_plus/minus' 
-                    ,sg.Hrs_mgr                                 AS 'MGR_req_hrs' 
-                    ,ROUND(sg.Hrs_mgr - SUM(IFNULL(sp.RegularTime,0)),2)  AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
-                FROM 
-                    sales s
-                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store and sg.Month = MONTH(s.date_sale)  and sg.Year = YEAR(s.date_sale) 
-                    INNER JOIN sales_payroll sp ON s.Store = sp.Store AND s.date_sale = sp.date_sale AND sg.Manager = sp.Employee
-                    LEFT JOIN sales_comments sc ON sc.store = s.Store AND sc.month = MONTH(s.date_sale) AND sc.year = YEAR(s.date_sale)  
-                WHERE
-                    s.date_sale BETWEEN  ?  AND   ? 
-                GROUP BY
-                    WEEK(s.date_sale,1) 
-                    ,s.Store
-                    ,sg.Manager";
+            ## Consulta en caso de que se Stores - Employees
+            $query.= " ORDER BY 
+                    ege.name ASC";
         }
-        if($typeRep==3)
-        {
-            ## Consulta en caso de que se desee Mensual
-            $query = " 
-                SELECT
-                    MONTH(s.date_sale)                                  AS 'Date' 
-                    ,ROUND((sg.Hours * 4),0)                            AS 'Budget'
-                    ,ROUND(SUM(s.Hours) - (sg.Hours * 4),2)             AS 'Budget_plus/minus'
-                    ,ROUND((sg.Hrs_mgr * 4),2)                          AS 'MGR_req_hrs' 
-                    ,ROUND((sg.Hrs_mgr * 4) - SUM(IFNULL(sp.RegularTime,0)),2)    AS 'MGR_hrs_plus/minus'".$SQL_SEL_CAMPOS_REP ."
-                FROM 
-                    sales s
-                    INNER JOIN sales_store_goals sg ON s.Store = sg.Store and sg.Month = MONTH(s.date_sale)  and sg.Year = YEAR(s.date_sale) 
-                    INNER JOIN sales_payroll sp ON s.Store = sp.Store AND s.date_sale = sp.date_sale AND sg.Manager = sp.Employee
-                    LEFT JOIN sales_comments sc ON sc.store = s.Store AND sc.month = MONTH(s.date_sale) AND sc.year = YEAR(s.date_sale)  
-                WHERE
-                    s.date_sale BETWEEN  ?  AND   ? 
-                GROUP BY
-                    MONTH(s.date_sale) 
-                    ,s.Store
-                    ,sg.Manager";
-        }
+        
         //echo $query;
         return $query;
     }
-    /*************************************************************************************/
-    /*************************************************************************************/
-    /*** function:    setStoreComment                                                  ***/
-    /*** Description: Funcion que se encarga de guardar comentarios sobre el reporte   ***/
-    /*** In Params:   $store:   Tienda a la cual se le agrega el comentario            ***/
-    /***              $message: Mensaje que se va a agregar a la tienda                ***/
-    /***              $mes:     Mes para el cual se agrega el comentario               ***/
-    /***              $year:    Año en el cual se agrega el comentario                 ***/
-    /*** Return:      Booleano                                                         ***/ 
-    /*************************************************************************************/
-    /*************************************************************************************/
-    public function setStoreComment($store,$message,$mes,$year){
-        $dbh = DataBase::getDbh();
-        try 
-        {
-            $query = "SELECT id FROM sales_comments WHERE store = ? AND month = ? AND year = ?";
-           // echo $query;
-            $selSth = $dbh->prepare($query); 
-            $selSth->execute(array($store,$mes,$year));         
-            $rst = $selSth->fetchAll(PDO::FETCH_CLASS);  
-            if(count($rst)!=0)
-            {
-                try 
-                {
-                    $query = "UPDATE sales_comments SET message = ? WHERE store = ? AND month = ? AND year = ?";
-                   // echo $query;
-                    $selSth = $dbh->prepare($query); 
-                    $rst = $selSth->execute(array($message,$store,$mes,$year));          
-                    return $rst;
-
-                } catch (PDOException $e) {
-                    print "Error!: " . $e->getMessage() . "<br/>";
-                    return false;
-                    die();
-                }
-            }
-            else  
-            {
-                try 
-                {
-                    $query = "INSERT INTO sales_comments(store, message, month, year) VALUES ( ?,?,?,?)";
-                   // echo $query;
-                    $selSth = $dbh->prepare($query); 
-                    $rst = $selSth->execute(array($store,$message,$mes,$year));         
-                    return $rst;
-
-                } catch (PDOException $e) {
-                    print "Error!: " . $e->getMessage() . "<br/>";
-                    return false;
-                    die();
-                }
-            }  
-
-        } 
-        catch (PDOException $e) 
-        {
-            print "Error!: " . $e->getMessage() . "<br/>";
-            return false;
-            die();
-        }
-    }
 }
+
 ?>

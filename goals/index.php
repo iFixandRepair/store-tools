@@ -64,49 +64,40 @@
 						</div>	
 						<div class="row">
 							<div class="col-md-offset-1" >
-								<div class="col-md-3">
+								<div class="col-md-4">
 									Initial Date
 								</div>
-								<div class="col-md-3">
-									End Date
-								</div>
-								<div class="col-md-3">
+								<div class="col-md-4">
 									Type Report					
 								</div>	
-								<div class="col-md-1">
+								<div class="col-md-2">
 									&nbsp;			
 								</div>					
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-offset-1" >
-								<div id="Init_date-container" class="col-md-3">
+								<div id="date-container" class="col-md-4">
 									<div class="input-group date">
-										<input class="form-control" type="text" id="Init_date" name="Init_date" value="<?php echo date('m/d/Y', time() - 60 * 60 * 24); ?>" placeholder="Init Date">
+										<input class="form-control" type="text" id="date" name="date" value="<?php echo date('m/d/Y', time() - 60 * 60 * 24); ?>" placeholder="Date">
 										<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
 									</div>
 								</div>
-								<div id="End_date-container" class="col-md-3">
-									<div class="input-group date">
-										<input class="form-control" type="text" id="End_date" name="End_date" value="<?php echo date('m/d/Y', time() - 60 * 60 * 24); ?>" placeholder="End Date">
-										<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-									</div>
-								</div>
-								<div class="col-md-3">
+								<div class="col-md-4">
 									<div class="btn-group" data-toggle="buttons">
 										<label class="btn btn-primary active">
-											<input type="radio" name="typeRep" id="typeRep" value="1" autocomplete="off" checked />Day
+											<input type="radio" name="typeRep" id="typeRep" value="1" autocomplete="off" checked />Stores - Employees
 										</label>
 										<label class="btn btn-primary">
-											<input type="radio" name="typeRep" id="typeRep" value="2" autocomplete="off">Week
+											<input type="radio" name="typeRep" id="typeRep" value="2" autocomplete="off">Stores
 										</label>
 										<label class="btn btn-primary">
-											<input type="radio" name="typeRep" id="typeRep" value="3" autocomplete="off">Month
+											<input type="radio" name="typeRep" id="typeRep" value="3" autocomplete="off">Employees
 										</label>
 									</div>							
 								</div>	
-								<div class="col-md-1">
-									<input type="button" id="btn-generateReport" value="Generate" name="btn-upload" class="btn btn-primary">					
+								<div class="col-md-2">
+									<input type="button" id="btn-generateReport" value="Generate" name="btn-generateReport" class="btn btn-primary">					
 								</div>					
 							</div>
 						</div>
@@ -116,142 +107,34 @@
 							</div>
 						</div>
 					</form>
-
-					<div class="modal fade" id="AddStoreComment">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h3 class="modal-title">Comments for<span id="NameStoreComment"></span></h3>
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div class="modal-body">
-									<div class="container-fluid">
-										<input type="hidden" id="MDLVR_Store" name="MDLVR_Store">
-										<div class="row">
-											<div class="col-md-4">
-												<strong>Message:</strong>
-											</div>
-											<div class="col-md-8">
-												<textarea id="MDLVR_Message" name="MDLVR_Message" rows="4" cols="50"></textarea>
-											</div>
-										</div>	
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" id="btn-save_MDLVR" class="btn btn-primary">Save</button>
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								</div>
-							</div>
+					<div class="row">
+						<div id="GOAL_stores">							
 						</div>
 					</div>
 
-					<table id="view-report-table" class="table table-striped">
-						<thead>
-							<tr>
-								<th>Date</th>
-								<th>Store</th>
-								<th>Manager</th>
-								<th>S</th>
-								<th>Sales</th>
-								<th>Accesories</th>
-								<th>Gross Profit</th>
-								<th>Hours</th>
-								<th>Budget</th>
-								<th>Plus/Minus</th>
-								<th>OT</th>
-								<th>MGR Req Hours</th>
-								<th>MGR HRS</th>
-								<th>Plus/ Minus</th>
-								<th>Comments</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
 				</div><!-- /View Report Tab -->
 
 				<!-- Upload Sales Tab -->	
 				<div role="tabpanel" class="tab-pane fade" id="DivFiles">	
 					<div id="messages-us" name="messages-us" class="messages-us"></div>			
 					<form  method="post" enctype="multipart/form-data" class="form-inline  navbar navbar-default formulario-us">
-<<<<<<< HEAD
-<<<<<<< HEAD
 						<div class="form-group">							
 							<div class="row">
 								<div class="col-md-4">
 									<label for="salesReport">Sales by Location</label>
 								</div>
 								<div class="col-md-8">
-									<input type="file" class="form-control" name="LocationSales" id="LocationSales">
-=======
-=======
->>>>>>> origin/master
-						<div class="form-group">
+									<input type="file" class="form-control" name="LocationSales" id="LocationSales">														
+								</div>
+							</div>							
 							<div class="row">
 								<div class="col-md-4">
-									<label for="salesReport">Date Sales</label>
-								</div>
-								<div id="date-sales-container" class="col-md-8">
-									<div class="input-group date">
-										<input class="form-control" type="text" id="date-sales" name="date-sales">
-										<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-4">
-									<label for="salesReport">Sales File</label>
-								</div>
-								<div class="col-md-8">
-									<input type="file" class="form-control" name="salesReport" id="salesReport">
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-4">
-<<<<<<< HEAD
-<<<<<<< HEAD
-									<label for="EmployeeSales">Sales by Employee/label>
+									<label for="EmployeeSales">Sales by Employee</label>
 								</div>
 								<div class="col-md-8">
 									<input type="file" class="form-control" name="EmployeeSales" id="EmployeeSales">
 								</div>
-							</div>							
-=======
-=======
->>>>>>> origin/master
-									<label for="accesoriesReport">Accesories File</label>
-								</div>
-								<div class="col-md-8">
-									<input type="file" class="form-control" name="accesoriesReport" id="accesoriesReport">
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-4">
-									<label for="locationPayroll">Location Payroll</label>
-								</div>
-								<div class="col-md-8">
-									<input type="file" class="form-control" name="locationPayroll" id="locationPayroll">
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-4">
-									<label for="AutoPunchOut">Auto Punch Out</label>
-								</div>
-								<div class="col-md-8">
-									<input type="file" class="form-control" name="AutoPunchOut" id="AutoPunchOut">
-								</div>
-							</div>
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
+							</div>									
 							<div class="row">
 								<div class="col-md-12">
 									<input type="button" id="btn-upload" value="Upload" name="btn-upload" class="btn btn-primary">
